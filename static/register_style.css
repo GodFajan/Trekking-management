@@ -1,0 +1,187 @@
+:root{
+  --maroon:#6E1E2B;
+  --maroon-dark:#4A1420;
+  --gold:#C9A227;
+  --cream:#FAF6EC;
+  --ink:#2B1B17;
+  --teal:#1F4B43;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+.container{
+  max-width:960px;
+  width:100%;
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 30px 60px -20px rgba(74,20,32,0.35);
+  display:grid;
+  grid-template-columns:1fr;
+}
+@media (min-width:768px){
+  .container{grid-template-columns:1fr 1fr;}
+}
+/* left artwork panel */
+.art-panel{
+  background:linear-gradient(160deg,var(--maroon) 0%,var(--maroon-dark) 100%);
+  color:var(--cream);
+  padding:48px 40px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:320px;
+  overflow:hidden;
+}
+.art-panel svg.motif{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0.14;
+}
+.art-eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-size:.72rem;
+  color:var(--gold);
+  font-weight:500;
+}
+.art-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.4rem;
+  line-height:1.15;
+  font-weight:700;
+  margin:14px 0 12px;
+  position:relative;
+  z-index:1;
+}
+.art-sub{
+  font-size:.92rem;
+  color:#EADFC8;
+  max-width:320px;
+  position:relative;
+  z-index:1;
+}
+.art-footer{
+  font-size:.75rem;
+  letter-spacing:.06em;
+  color:#D9B978;
+  position:relative;
+  z-index:1;
+  border-top:1px solid rgba(234,223,200,0.25);
+  padding-top:14px;
+}
+/* right form panel */
+.input-form{
+  padding:40px 40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  max-height:90vh;
+  overflow-y:auto;
+}
+.center{text-align:left;}
+.input-form > h2.center{
+  font-family:'Cormorant Garamond',serif;
+  font-weight:700;
+  color:var(--maroon-dark);
+  font-size:1.9rem;
+  margin:0 0 2px;
+}
+.input-form h3{
+  font-size:1rem;
+  font-weight:500;
+  color:#8a7a72;
+  margin-bottom:22px;
+}
+table{width:100%;border-collapse:separate;border-spacing:0 4px;}
+table td{padding:7px 0;vertical-align:top;}
+table td label{
+  font-size:.82rem;
+  font-weight:500;
+  color:var(--ink);
+  letter-spacing:.02em;
+  display:inline-block;
+  padding-top:9px;
+}
+table td input[type="email"],
+table td input[type="password"],
+table td input[type="text"],
+table td select,
+table td textarea{
+  width:100%;
+  padding:10px 13px;
+  border:1.5px solid #E7DFD3;
+  border-radius:10px;
+  font-family:'Poppins',sans-serif;
+  font-size:.9rem;
+  background:#FCFAF5;
+  color:var(--ink);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+table td textarea{
+  resize:vertical;
+  min-height:60px;
+}
+table td select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236E1E2B'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.08 1.04l-4.25 4.65a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  background-size:16px;
+  padding-right:36px;
+  cursor:pointer;
+}
+table td input[type="email"]:focus,
+table td input[type="password"]:focus,
+table td input[type="text"]:focus,
+table td select:focus,
+table td textarea:focus{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(201,162,39,0.18);
+  background-color:#fff;
+}
+table td input[type="Submit"]{
+  margin-top:12px;
+  padding:11px 22px;
+  border:none;
+  border-radius:10px;
+  background:var(--maroon);
+  color:#fff;
+  font-weight:600;
+  font-size:.92rem;
+  letter-spacing:.02em;
+  cursor:pointer;
+  transition:background .15s ease, transform .1s ease;
+  white-space:nowrap;
+}
+table td input[type="Submit"]:hover{
+  background:var(--maroon-dark);
+}
+table td input[type="Submit"]:active{
+  transform:translateY(1px);
+}
+table td a{
+  display:inline-block;
+  margin-top:16px;
+  font-size:.85rem;
+  color:var(--teal);
+  text-decoration:none;
+  font-weight:500;
+}
+table td a:hover{
+  text-decoration:underline;
+  color:var(--maroon);
+}
