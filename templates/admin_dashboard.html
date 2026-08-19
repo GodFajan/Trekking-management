@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6E1E2B" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/main.css" />
+    <title>Admin Dashboard</title>
+  </head>
+  <body>
+    <div class="container">
+      <div><h2 class="center">Tourism Company</h2></div>
+
+      <div class="dashboard-form">
+        {% if session.pop('added_trek', None) %}
+          <div class="flash">Trek added successfully</div>
+        {% endif %}
+        {% if session.pop('edited_trek', None) %}
+          <div class="flash">Trek edited successfully</div>
+        {% endif %}
+        {% if session.pop('del_suc', None) %}
+          <div class="flash">Trek deleted successfully</div>
+        {% endif %}
+
+        <h3 class="center">Admin Dashboard</h3>
+
+        <div class="stat-wrap">
+          <table class = "center" name = "Dashboard" border = "1">
+            <caption class="center">Dashboard</caption>
+            <tr>
+              <th>Total Treks</th>
+              <th>Total Users</th>
+              <th>Total Staff</th>
+              <th>Total Booking</th>
+            </tr>
+            <tr>
+              <td>{{ t_treks }}</td>
+              <td>{{ t_users }}</td>
+              <td>{{ t_staffs }}</td>
+              <td>{{ t_bookings }}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="dash-actions">
+          <a href="/all_treks" class="button-link">See All Treks</a>
+          <a href="/trek_add" class="button-link">Add new Trek</a>
+          <a href="/all_staffs_users" class="button-link">All Staffs and Users</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

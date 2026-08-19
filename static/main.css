@@ -39,9 +39,10 @@
 }
 
 *{box-sizing:border-box;}
-html,body{height:100%;}
+html{height:100%;}
 
 body{
+  min-height:100%;
   margin:0;
   font-family:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
   font-size:16px;
@@ -96,9 +97,15 @@ body::after{
   display:grid;
   grid-template-columns:1fr;
 }
+/* Only the auth pages (the ones carrying an artwork panel) split in two. */
 @media (min-width:880px){
-  .container{grid-template-columns:1.04fr 1fr;}
+  .container:has(.art-panel){grid-template-columns:1.04fr 1fr;}
 }
+
+/* Dashboard/table pages are a single wide column and start at the top,
+   so long tables stay reachable instead of overflowing a centred box. */
+.container:has(.dashboard-form){max-width:1320px;}
+body:has(.dashboard-form){align-items:flex-start;}
 
 /* --------------------------------------------------------------------------
    Left artwork panel
@@ -286,6 +293,7 @@ body::after{
 .field input[type="email"],
 .field input[type="password"],
 .field input[type="text"],
+.field input[type="date"],
 .field select,
 .field textarea{
   width:100%;
@@ -309,12 +317,14 @@ body::after{
 .field input[type="email"]:hover,
 .field input[type="password"]:hover,
 .field input[type="text"]:hover,
+.field input[type="date"]:hover,
 .field select:hover,
 .field textarea:hover{border-color:var(--line-strong);}
 
 .field input[type="email"]:focus-visible,
 .field input[type="password"]:focus-visible,
 .field input[type="text"]:focus-visible,
+.field input[type="date"]:focus-visible,
 .field select:focus-visible,
 .field textarea:focus-visible{
   outline:none;
@@ -427,6 +437,504 @@ input[type="Submit"]:active{transform:translateY(1px);}
 }
 .form-error:empty{display:none;}
 
+/* ==========================================================================
+   DASHBOARD & TABLE PAGES
+   admin/staff/user dashboards, trek lists, staff management, trek add/edit.
+   Hooks are :has()-based so no existing markup attribute has to change.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Brand banner — the <div><h2 class="center">…</h2></div> above each card.
+   Carries the same lattice + gold-leaf language as the auth artwork panel.
+   -------------------------------------------------------------------------- */
+.container > div:has(> h2.center){
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  padding:clamp(24px,3vw,36px) clamp(22px,3vw,44px);
+  background:linear-gradient(116deg,var(--maroon-lit) 0%,var(--maroon) 42%,var(--maroon-dark) 100%);
+  border-bottom:1px solid rgba(201,162,39,.34);
+}
+.container > div:has(> h2.center)::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  z-index:-1;
+  pointer-events:none;
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(201,162,39,.16) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(-45deg, rgba(201,162,39,.16) 0 1px, transparent 1px 24px),
+    radial-gradient(circle, rgba(234,223,200,.18) 0 1.3px, transparent 2px);
+  background-size:auto,auto,48px 48px;
+  mask-image:linear-gradient(100deg,#000 0%,rgba(0,0,0,.35) 58%,transparent 100%);
+}
+.container > div > h2.center{
+  margin:0;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(1.6rem,2.6vw,2.35rem);
+  font-weight:700;
+  line-height:1.1;
+  letter-spacing:-.01em;
+  color:var(--cream);
+  background:linear-gradient(96deg,#FFF8EA 0%,var(--gold-pale) 52%,var(--gold-soft) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Card body
+   -------------------------------------------------------------------------- */
+.dashboard-form{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:clamp(18px,2.2vw,26px);
+  padding:clamp(24px,3vw,38px) clamp(20px,3vw,44px) clamp(28px,3.4vw,44px);
+}
+
+/* Section headings, each closed off with a fading gold rule. */
+.dashboard-form h3{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:0;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(1.3rem,1.9vw,1.6rem);
+  font-weight:600;
+  letter-spacing:-.005em;
+  color:var(--maroon-dark);
+}
+.dashboard-form h3::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,rgba(201,162,39,.55),rgba(201,162,39,0));
+}
+.dashboard-form h3 + .table-wrap,
+.dashboard-form h3 + .stat-wrap,
+.dashboard-form h3 + .form-grid{margin-top:-4px;}
+
+/* --------------------------------------------------------------------------
+   Flash messages (replacing the blocking alert() popups)
+   -------------------------------------------------------------------------- */
+.flash{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin:0;
+  padding:13px 18px;
+  border:1px solid rgba(46,125,99,.28);
+  border-left:3px solid #2E7D63;
+  border-radius:14px;
+  background:rgba(46,125,99,.08);
+  color:#1B5F4A;
+  font-size:.88rem;
+  font-weight:500;
+}
+.flash::before{
+  content:"";
+  flex:none;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#2E7D63;
+  box-shadow:0 0 0 4px rgba(46,125,99,.18);
+}
+.flash-warn{
+  border-color:rgba(179,38,30,.28);
+  border-left-color:var(--danger);
+  background:rgba(179,38,30,.07);
+  color:#8E2018;
+}
+.flash-warn::before{
+  background:var(--danger);
+  box-shadow:0 0 0 4px rgba(179,38,30,.16);
+}
+
+/* --------------------------------------------------------------------------
+   Tables — border="1" is left in the markup and neutralised here.
+   .table-wrap gives wide tables horizontal scroll instead of a squashed grid.
+   -------------------------------------------------------------------------- */
+.table-wrap{
+  overflow-x:auto;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--surface);
+  box-shadow:
+    0 1px 2px rgba(44,14,25,.04),
+    0 14px 26px -20px rgba(44,14,25,.3);
+  scrollbar-width:thin;
+  scrollbar-color:var(--line-strong) transparent;
+}
+.table-wrap::-webkit-scrollbar{height:9px;}
+.table-wrap::-webkit-scrollbar-thumb{
+  border:3px solid transparent;
+  border-radius:999px;
+  background-clip:content-box;
+  background-color:var(--line-strong);
+}
+
+.table-wrap table{
+  width:100%;
+  min-width:max-content;
+  border:none;
+  border-collapse:collapse;
+  border-spacing:0;
+  font-size:.88rem;
+}
+
+/* Table titles use <caption>, the one element allowed to sit inside a
+   <table> — the original <h3>s in that position were hoisted out by the
+   parser before they ever rendered. */
+.table-wrap caption{
+  caption-side:top;
+  padding:15px 18px 13px;
+  text-align:left;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(201,162,39,.07),rgba(201,162,39,.02));
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.22rem;
+  font-weight:600;
+  color:var(--maroon-dark);
+}
+.stat-wrap caption{
+  caption-side:top;
+  padding:0 0 12px 15px;
+  text-align:left;
+  font-size:.69rem;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  color:var(--muted);
+}
+.table-wrap th{
+  border:none;
+  border-bottom:1px solid var(--line);
+  padding:14px 18px;
+  text-align:left;
+  white-space:nowrap;
+  background:linear-gradient(180deg,rgba(110,30,43,.075),rgba(110,30,43,.035));
+  font-size:.69rem;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+  color:var(--maroon);
+}
+.table-wrap td{
+  border:none;
+  border-bottom:1px solid rgba(231,223,211,.75);
+  padding:13px 18px;
+  vertical-align:middle;
+  color:var(--ink);
+}
+.table-wrap tr:last-child td{border-bottom:none;}
+.table-wrap tr:hover td{background:rgba(201,162,39,.055);}
+.table-wrap td:empty::after{
+  content:"—";
+  color:var(--muted);
+}
+
+/* Inline editable cells (staff trek management). */
+.table-wrap input[type="text"],
+.table-wrap select{
+  width:100%;
+  min-width:96px;
+  padding:8px 11px;
+  border:1.5px solid var(--line);
+  border-radius:10px;
+  background:var(--surface-sunk);
+  color:var(--ink);
+  font-family:'Poppins',system-ui,sans-serif;
+  font-size:.86rem;
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease);
+}
+.table-wrap select{
+  appearance:none;
+  padding-right:32px;
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236E1E2B'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.08 1.04l-4.25 4.65a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+  background-size:15px;
+}
+.table-wrap input[type="text"]:focus-visible,
+.table-wrap select:focus-visible{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:var(--ring);
+  background-color:var(--surface);
+}
+
+/* --------------------------------------------------------------------------
+   Stat strip — the name="Dashboard" summary tables become KPI tiles.
+   Column headers form the tile cap, values the tile body.
+   -------------------------------------------------------------------------- */
+.stat-wrap{
+  overflow-x:auto;
+  padding:2px 0;
+  scrollbar-width:thin;
+}
+table[name="Dashboard"]{
+  width:100%;
+  min-width:max-content;
+  border:none;
+  border-collapse:separate;
+  border-spacing:14px 0;
+}
+table[name="Dashboard"] th{
+  border:1px solid var(--line);
+  border-bottom:none;
+  border-radius:18px 18px 0 0;
+  padding:17px 18px 6px;
+  text-align:left;
+  white-space:nowrap;
+  background:linear-gradient(180deg,rgba(110,30,43,.065),rgba(110,30,43,0));
+  font-size:.67rem;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--maroon);
+}
+table[name="Dashboard"] td{
+  border:1px solid var(--line);
+  border-top:none;
+  border-radius:0 0 18px 18px;
+  padding:0 18px 18px;
+  background:linear-gradient(180deg,rgba(201,162,39,0),rgba(201,162,39,.07));
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(2rem,3.4vw,2.75rem);
+  font-weight:700;
+  line-height:1.05;
+  color:var(--maroon-dark);
+}
+
+/* --------------------------------------------------------------------------
+   Status / role / difficulty pills
+   -------------------------------------------------------------------------- */
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:4px 12px;
+  border:1px solid var(--line-strong);
+  border-radius:999px;
+  background:var(--surface-sunk);
+  color:var(--muted);
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.pill::before{
+  content:"";
+  flex:none;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:currentColor;
+}
+.pill-open,.pill-active,.pill-booked,.pill-easy{
+  border-color:rgba(46,125,99,.4);
+  background:rgba(46,125,99,.1);
+  color:#1B5F4A;
+}
+.pill-closed,.pill-blacklisted,.pill-hard{
+  border-color:rgba(179,38,30,.36);
+  background:rgba(179,38,30,.09);
+  color:#8E2018;
+}
+.pill-pending,.pill-moderate{
+  border-color:rgba(201,162,39,.5);
+  background:rgba(201,162,39,.13);
+  color:#8A6A0E;
+}
+.pill-completed{
+  border-color:rgba(31,75,67,.36);
+  background:rgba(31,75,67,.09);
+  color:var(--teal);
+}
+.pill-admin{
+  border-color:rgba(110,30,43,.36);
+  background:rgba(110,30,43,.09);
+  color:var(--maroon);
+}
+.pill-staff{
+  border-color:rgba(201,162,39,.5);
+  background:rgba(201,162,39,.12);
+  color:#8A6A0E;
+}
+.pill-user{
+  border-color:rgba(31,75,67,.32);
+  background:rgba(31,75,67,.08);
+  color:var(--teal);
+}
+
+/* --------------------------------------------------------------------------
+   Buttons — .button-link, bare <button>, and the Search input.
+   Intent variants are derived from the form action / link href, so no
+   extra classes are needed in the markup.
+   -------------------------------------------------------------------------- */
+.button-link,
+.dashboard-form button,
+.table-wrap button,
+input[type="button"]{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:9px 19px;
+  border:1px solid transparent;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--maroon-lit) 0%,var(--maroon) 50%,var(--maroon-dark) 100%);
+  color:#FFF8EA;
+  font-family:'Poppins',system-ui,sans-serif;
+  font-size:.81rem;
+  font-weight:600;
+  letter-spacing:.03em;
+  line-height:1.4;
+  text-decoration:none;
+  white-space:nowrap;
+  cursor:pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    0 6px 14px -8px rgba(74,20,32,.65);
+  transition:
+    transform .16s var(--ease),
+    box-shadow .18s var(--ease),
+    filter .18s var(--ease);
+}
+.button-link:hover,
+.dashboard-form button:hover:not(:disabled),
+input[type="button"]:hover{
+  filter:saturate(1.08) brightness(1.05);
+  transform:translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    0 12px 22px -10px rgba(74,20,32,.6),
+    0 0 0 1px rgba(201,162,39,.42);
+}
+.button-link:active,
+.dashboard-form button:active:not(:disabled),
+input[type="button"]:active{transform:translateY(1px);}
+.button-link:focus-visible,
+.dashboard-form button:focus-visible,
+input[type="button"]:focus-visible{
+  outline:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),var(--ring);
+}
+.dashboard-form button:disabled{
+  cursor:not-allowed;
+  opacity:.42;
+  filter:grayscale(.5);
+  transform:none;
+  box-shadow:none;
+}
+
+/* Destructive: delete a trek, blacklist or reject a person. */
+form[action^="/delete_trek"] .button-link,
+form[action^="/blacklist"] .button-link,
+form[action^="/reject"] .button-link{
+  background:linear-gradient(135deg,#C24436 0%,#A32A1D 52%,#7E1C12 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 6px 14px -8px rgba(126,28,18,.6);
+}
+/* Constructive: approve a pending staff member, close out a finished trek. */
+form[action^="/approve"] .button-link,
+form[action^="/mark_completed"] button{
+  background:linear-gradient(135deg,#37906F 0%,#2A6E56 52%,var(--teal) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 6px 14px -8px rgba(31,75,67,.6);
+}
+/* Headline action: booking a trek gets the gold-leaf treatment. */
+form[action^="/book_trek"] .button-link{
+  background:linear-gradient(135deg,var(--gold-soft) 0%,var(--gold) 58%,#A8871B 100%);
+  color:var(--maroon-dark);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.4),
+    0 6px 14px -8px rgba(168,135,27,.6);
+}
+/* Quiet secondary actions: edit link and cross-page navigation. */
+a.button-link[href^="/edit_trek"],
+a.button-link[href="/all_treks"],
+a.button-link[href="/all_staffs_users"],
+a.button-link[href^="/staff_mng"],
+input[type="button"]{
+  background:var(--surface-sunk);
+  color:var(--teal);
+  border-color:var(--line-strong);
+  box-shadow:none;
+}
+a.button-link[href^="/edit_trek"]:hover,
+a.button-link[href="/all_treks"]:hover,
+a.button-link[href="/all_staffs_users"]:hover,
+a.button-link[href^="/staff_mng"]:hover,
+input[type="button"]:hover{
+  filter:none;
+  border-color:var(--gold);
+  color:var(--maroon);
+  background:var(--surface);
+  box-shadow:0 8px 18px -12px rgba(74,20,32,.45);
+}
+
+/* Row of navigation buttons under a dashboard. */
+.dash-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+}
+
+/* Trek add/edit reuse the auth field grid, two columns when there is room. */
+.dashboard-form .actions{
+  justify-items:start;
+  margin-top:2px;
+}
+.dashboard-form .actions button,
+.dashboard-form .actions input[type="Submit"]{width:auto;min-width:170px;}
+@media (min-width:640px){
+  .dashboard-form .form-grid{
+    grid-template-columns:1fr 1fr;
+    column-gap:18px;
+    row-gap:17px;
+  }
+  .dashboard-form .form-grid > .field-wide,
+  .dashboard-form .form-grid > .actions{grid-column:1 / -1;}
+}
+
+/* --------------------------------------------------------------------------
+   Search row — the div.center holding a text field and a Search button.
+   The literal "|" separator in the markup is toned down to a hairline.
+   -------------------------------------------------------------------------- */
+.dashboard-form div.center:has(input[type="button"]){
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:12px;
+  color:var(--line-strong);
+}
+.dashboard-form div.center:has(input[type="button"]) input[type="text"]{
+  flex:1 1 240px;
+  max-width:340px;
+  padding:11px 15px;
+  border:1.5px solid var(--line);
+  border-radius:999px;
+  background:var(--surface-sunk);
+  color:var(--ink);
+  font-family:'Poppins',system-ui,sans-serif;
+  font-size:.88rem;
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease);
+}
+.dashboard-form div.center:has(input[type="button"]) input[type="text"]:focus-visible{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:var(--ring);
+  background:var(--surface);
+}
+
 /* --------------------------------------------------------------------------
    Small screens
    -------------------------------------------------------------------------- */
@@ -471,6 +979,58 @@ input[type="Submit"]:active{transform:translateY(1px);}
   }
   .field input::placeholder,
   .field textarea::placeholder{color:#7C6A63;}
+
+  /* dashboards */
+  .container > div > h2.center{color:#FFF3E2;}
+  .dashboard-form h3{color:#FFEAD2;}
+  .table-wrap{background:#1E1216;border-color:var(--line);}
+  .table-wrap th{
+    background:linear-gradient(180deg,rgba(201,162,39,.13),rgba(201,162,39,.05));
+    color:var(--gold-soft);
+    border-bottom-color:var(--line);
+  }
+  .table-wrap td{border-bottom-color:rgba(58,40,44,.85);}
+  .table-wrap tr:hover td{background:rgba(201,162,39,.07);}
+  table[name="Dashboard"] th{
+    background:linear-gradient(180deg,rgba(201,162,39,.12),rgba(201,162,39,0));
+    color:var(--gold-soft);
+  }
+  table[name="Dashboard"] td{
+    background:linear-gradient(180deg,rgba(201,162,39,0),rgba(201,162,39,.08));
+    color:#FFF3E2;
+  }
+  .table-wrap select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23E3C468'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.08 1.04l-4.25 4.65a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  }
+  .flash{
+    border-color:rgba(95,191,174,.3);
+    border-left-color:#5FBFAE;
+    background:rgba(95,191,174,.1);
+    color:#A6E2D6;
+  }
+  .flash::before{background:#5FBFAE;box-shadow:0 0 0 4px rgba(95,191,174,.18);}
+  .flash-warn{
+    border-color:rgba(242,131,123,.3);
+    border-left-color:var(--danger);
+    background:rgba(242,131,123,.1);
+    color:#F6B3AE;
+  }
+  .flash-warn::before{background:var(--danger);box-shadow:0 0 0 4px rgba(242,131,123,.18);}
+  .pill{background:rgba(255,248,234,.05);}
+  .pill-open,.pill-active,.pill-booked,.pill-easy{color:#7FD9C4;}
+  .pill-closed,.pill-blacklisted,.pill-hard{color:#F49C94;}
+  .pill-pending,.pill-moderate,.pill-staff{color:var(--gold-soft);}
+  .pill-completed,.pill-user{color:#7FD9C4;}
+  .pill-admin{color:#F0A6B2;}
+  a.button-link[href^="/edit_trek"],
+  a.button-link[href="/all_treks"],
+  a.button-link[href="/all_staffs_users"],
+  a.button-link[href^="/staff_mng"],
+  input[type="button"]{
+    background:rgba(255,248,234,.06);
+    color:var(--gold-soft);
+    border-color:var(--line-strong);
+  }
 }
 
 /* --------------------------------------------------------------------------

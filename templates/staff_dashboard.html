@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6E1E2B" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/main.css" />
+    <title>Staff Dashboard</title>
+  </head>
+  <body>
+    <div class="container">
+      <div><h2 class="center">Tourism Company</h2></div>
+
+      <div class="dashboard-form">
+        <h3 class="center">Staff Dashboard</h3>
+
+        <div class="stat-wrap">
+          <table class = "center" name = "Dashboard" border = "1">
+            <caption class="center">Dashboard</caption>
+            <tr>
+              <th>Assigned Treks</th>
+              <th>Total Participants</th>
+              <th>Open Treks</th>
+            </tr>
+            <tr>
+              <td>{{ ass_treks }}</td>
+              <td>{{ total_part }}</td>
+              <td>{{ open_treks }}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-wrap">
+          <table class = "center" name = "Asstreks" border = "1">
+            <caption class="center">Assigned Treks</caption>
+            <tr>
+              <th>Trek Name</th>
+              <th>Locations</th>
+              <th>Participants</th>
+              <th>Slots</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+            {% for t, p_count in trek_data %}
+              <tr>
+                <td>{{ t.trek_name }}</td>
+                <td>{{ t.location }}</td>
+                <td>{{ p_count }}</td>
+                <td>{{ t.avalaible_slots }}</td>
+                <td><span class="pill pill-{{ t.status|lower }}">{{ t.status }}</span></td>
+                <td>
+                  <a href="/staff_mng/{{ t.trek_id }}" class="button-link">Manage</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

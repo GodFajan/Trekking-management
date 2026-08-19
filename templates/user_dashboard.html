@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6E1E2B" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/main.css" />
+    <title>User Dashboard</title>
+  </head>
+  <body>
+    <div class="container">
+      <div><h2 class="center">Tourism Company</h2></div>
+
+      <div class="dashboard-form">
+        <h3 class="center">User Dashboard</h3>
+
+        <div class="dash-actions">
+          <a href="/all_treks" class="button-link">See All Treks</a>
+        </div>
+
+        <div class="table-wrap">
+          <table class="center" name="My_Bookings" border="1">
+            <caption class="center">My Bookings</caption>
+            <tr>
+              <th>Trek Name</th>
+              <th>Location</th>
+              <th>Start Date</th>
+              <th>Booked Date</th>
+              <th>Status</th>
+            </tr>
+            {% for b,t in my_bookings %}
+              {% if b.status == "Booked"%}
+                <tr>
+                  <td>{{ t.trek_name }}</td>
+                  <td>{{ t.location }}</td>
+                  <td>{{ t.start_date }}</td>
+                  <td>{{ b.booking_date }}</td>
+                  <td><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </table>
+        </div>
+
+        <div class="table-wrap">
+          <table class="center" name="Book_His" border="1">
+            <caption class="center">Booking History</caption>
+            <tr>
+              <th>Trek Name</th>
+              <th>Location</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Booked Date</th>
+              <th>Status</th>
+            </tr>
+            {% for b,t in my_bookings %}
+              {% if b.status == "Completed" %}
+                <tr>
+                  <td>{{ t.trek_name }}</td>
+                  <td>{{ t.location }}</td>
+                  <td>{{ t.start_date }}</td>
+                  <td>{{ t.end_date }}</td>
+                  <td>{{ b.booking_date }}</td>
+                  <td><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

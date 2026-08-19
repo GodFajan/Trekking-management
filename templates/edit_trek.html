@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6E1E2B" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/main.css" />
+    <title>Trek Edit</title>
+  </head>
+  <body>
+    <div class="container">
+      <div><h2 class="center">Tourism Company</h2></div>
+
+      <div class="dashboard-form">
+        {% if session.pop('err_msg_end_date', None) %}
+          <div class="flash flash-warn">Please provide a correct end date</div>
+        {% endif %}
+
+        {% if session.pop('err_msg_value_error', None) %}
+          <div class="flash flash-warn">Please provide correct details</div>
+        {% endif %}
+
+        <h3 class="center">Edit Treks</h3>
+
+        <form action= "/edit_trek/{{ t.trek_id }}" method = "POST">
+          <div class="form-grid">
+            <div class="field field-wide">
+              <label for="tname">Trek Name</label>
+              <input type="text" name = "tname" id="tname" value="{{ t.trek_name }}"/>
+            </div>
+            <div class="field field-wide">
+              <label for="lname">Location</label>
+              <input type="text" name = "lname" id="lname" value="{{ t.location }}"/>
+            </div>
+            <div class="field">
+              <label for="dfclty">Difficulty</label>
+              <select name="dfclty" id="dfclty">
+                <option value="Easy" {% if t.difficulty == "Easy" %}selected{% endif %}>Easy</option>
+                <option value="Moderate" {% if t.difficulty == "Moderate" %}selected{% endif %}>Moderate</option>
+                <option value="Hard" {% if t.difficulty == "Hard" %}selected{% endif %}>Hard</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="stype">Status</label>
+              <select name="stype" id="stype">
+                <option value="Open" {% if t.status == "Open" %}selected{% endif %}>Open</option>
+                <option value="Closed" {% if t.status == "Closed" %}selected{% endif %}>Closed</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="slots">Available Slots</label>
+              <input type="text" name = "slots" id="slots" value="{{ t.avalaible_slots }}">
+            </div>
+            <div class="field">
+              <label for="s_id">Assigned Staff id</label>
+              <input type="text" name = "s_id" id="s_id" value="{{ t.ass_staff_id }}">
+            </div>
+            <div class="field">
+              <label for="str_date">Start_date</label>
+              <input type="date" name="str_date" id="str_date" value = "{{ t.start_date }}">
+            </div>
+            <div class="field">
+              <label for="end_date">End_date</label>
+              <input type="date" name="end_date" id="end_date" value = "{{ t.end_date }}">
+            </div>
+            <div class="actions">
+              <button type = "submit" name = "Edit" class="button-link">Edit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

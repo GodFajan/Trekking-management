@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6E1E2B" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/main.css" />
+    <title>Trek Management</title>
+  </head>
+  <body>
+    <div class="container">
+      <div><h2 class="center">Tourism Company</h2></div>
+
+      <div class="dashboard-form">
+
+        <h3 class="center">{{ t.trek_name }}</h3>
+
+        <form action="/staff_mng/{{ t.trek_id }}" method="POST">
+          <div class="table-wrap">
+            <table class="center" name="Trek_s_info" border="1">
+              <caption class="center">Trek Info</caption>
+              <tr>
+                <th>Location</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Available Slot</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+              <tr>
+                <td>{{ t.location }}</td>
+                <td>{{ t.start_date }}</td>
+                <td>{{ t.end_date }}</td>
+                <td>
+                  <input type="text" name="Aslots" value="{{ t.avalaible_slots }}" />
+                </td>
+                <td>
+                  <select name="stype">
+                    <option value="Open" {% if t.status == "Open" %}selected{% endif %}>Open</option>
+                    <option value="Closed" {% if t.status == "Closed" %}selected{% endif %}>Closed</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="submit">Update</button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </form>
+
+        <div class="dash-actions">
+          <form action="/mark_completed/{{ t.trek_id }}" method="POST">
+            <button type="submit" {% if t.status == "Completed" %}disabled{% endif %}>Mark as Completed</button>
+          </form>
+        </div>
+
+        <div class="table-wrap">
+          <table class="center" name="terk_part" border="1">
+            <caption class="center">Participants</caption>
+            <tr>
+              <th>User Name</th>
+              <th>Email</th>
+              <th>Booking Date</th>
+              <th>Status</th>
+            </tr>
+            {% for b, u in participants %}
+            <tr>
+              <td>{{ u.name }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ b.booking_date }}</td>
+              <td><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>
