@@ -11,5 +11,9 @@ db.init_app(app)
 
 app.register_blueprint(admin_routes)
 
+# Create the tables on first run so a fresh clone works without a manual step.
+with app.app_context():
+    db.create_all()
+
 if __name__ == "__main__":
     app.run(debug = True)

@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6E1E2B" />
+    <meta name="description" content="Tourism Company — guided treks across the world's cultures. Browse graded routes, reserve your slot, and travel with local guides." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/main.css" />
+    <link rel="stylesheet" href="/static/landing_style.css">
+    <title>Tourism Company — Walk the World's Oldest Stories</title>
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true"><span id="progressBar"></span></div>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- ==================== NAV ==================== -->
+    <header class="nav" id="nav">
+      <div class="nav-inner">
+        <a class="brand" href="#main">
+          <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+            <circle cx="22" cy="22" r="19" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".55"/>
+            <circle cx="22" cy="22" r="19" fill="none" stroke="#C9A227" stroke-width="1.4" stroke-dasharray="1.5 5"/>
+            <path d="M22 5 L25 20 L22 22 L19 20 Z" fill="#C9A227"/>
+            <path d="M22 39 L19 24 L22 22 L25 24 Z" fill="currentColor" opacity=".7"/>
+          </svg>
+          <span class="brand-name">Tourism Company</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Sections">
+          <a href="#features">Why us</a>
+          <a href="#how">How it works</a>
+          <a href="#routes">Routes</a>
+          <a href="#voices">Voices</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a class="cta cta-ghost" href="/login">Sign in</a>
+          <a class="cta" href="/register">Create account</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ==================== HERO ==================== -->
+      <section class="hero">
+        <div class="hero-aura" aria-hidden="true"></div>
+        <div class="hero-lattice" aria-hidden="true"></div>
+
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">Worldwide Travel Platform</p>
+
+            <h1 class="hero-title">
+              <span class="line"><span class="word" style="--i:0">Walk</span> <span class="word" style="--i:1">the</span> <span class="word" style="--i:2">world's</span></span>
+              <span class="line"><span class="word shimmer" style="--i:3">oldest</span> <span class="word shimmer" style="--i:4">stories.</span></span>
+            </h1>
+
+            <p class="hero-sub">
+              From the temples of Kyoto to the ridgelines of the Andes — browse graded treks,
+              reserve your slot in seconds, and walk with guides who know every turn of the route.
+            </p>
+
+            <div class="hero-cta">
+              <a class="cta cta-lg" href="/register">
+                Start your journey
+                <svg class="cta-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                  <path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+              <a class="cta cta-ghost cta-lg" href="/login">I already have an account</a>
+            </div>
+
+            <ul class="hero-trust">
+              <li>5 continents</li>
+              <li>42 guided routes</li>
+              <li>A guide on every departure</li>
+            </ul>
+          </div>
+
+          <!-- Animated compass / globe composition -->
+          <div class="hero-art" aria-hidden="true">
+            <svg viewBox="0 0 520 520" focusable="false">
+              <defs>
+                <linearGradient id="peak" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%" stop-color="#C9A227" stop-opacity=".55"/>
+                  <stop offset="100%" stop-color="#EADFC8" stop-opacity=".95"/>
+                </linearGradient>
+                <clipPath id="globe"><circle cx="260" cy="260" r="132"/></clipPath>
+              </defs>
+
+              <!-- rotating outer ring -->
+              <g class="ring-outer">
+                <circle cx="260" cy="260" r="228" fill="none" stroke="#C9A227" stroke-width="1.2" stroke-dasharray="2 10" opacity=".65"/>
+                <circle cx="260" cy="32"  r="5" fill="#C9A227"/>
+                <circle cx="488" cy="260" r="3.5" fill="#EADFC8" opacity=".8"/>
+                <circle cx="260" cy="488" r="4" fill="#C9A227" opacity=".8"/>
+                <circle cx="32"  cy="260" r="3" fill="#EADFC8" opacity=".7"/>
+              </g>
+
+              <!-- counter-rotating mid ring -->
+              <g class="ring-mid">
+                <circle cx="260" cy="260" r="182" fill="none" stroke="#EADFC8" stroke-width="1" opacity=".35"/>
+                <circle cx="260" cy="260" r="182" fill="none" stroke="#C9A227" stroke-width="2" stroke-dasharray="34 320" stroke-linecap="round"/>
+              </g>
+
+              <!-- globe body -->
+              <circle cx="260" cy="260" r="132" fill="rgba(250,246,236,.05)" stroke="#EADFC8" stroke-width="1.6" opacity=".85"/>
+              <g clip-path="url(#globe)" fill="none" stroke="#EADFC8" stroke-width="1" opacity=".45">
+                <ellipse cx="260" cy="260" rx="132" ry="46"/>
+                <ellipse cx="260" cy="260" rx="132" ry="94"/>
+                <ellipse cx="260" cy="260" rx="46"  ry="132"/>
+                <ellipse cx="260" cy="260" rx="94"  ry="132"/>
+                <path d="M128 260 H392"/>
+              </g>
+
+              <!-- horizon range inside the globe -->
+              <g clip-path="url(#globe)">
+                <path d="M128 330 L172 272 L206 314 L248 250 L292 316 L332 262 L392 330 L392 392 L128 392 Z"
+                      fill="url(#peak)" opacity=".55"/>
+                <path class="wave" d="M110 356 Q152 340 194 356 T278 356 T362 356 T446 356" fill="none" stroke="#EADFC8" stroke-width="1.4" opacity=".4"/>
+              </g>
+
+              <!-- compass needle -->
+              <g class="needle">
+                <path d="M260 150 L272 252 L260 264 L248 252 Z" fill="#C9A227"/>
+                <path d="M260 370 L248 268 L260 256 L272 268 Z" fill="#EADFC8" opacity=".62"/>
+                <circle cx="260" cy="260" r="7" fill="#FAF6EC"/>
+                <circle cx="260" cy="260" r="3" fill="#6E1E2B"/>
+              </g>
+
+              <!-- sun -->
+              <g class="sun">
+                <circle cx="408" cy="128" r="20" fill="none" stroke="#C9A227" stroke-width="1.6"/>
+                <g stroke="#C9A227" stroke-width="1.6" stroke-linecap="round">
+                  <path d="M408 92 V102"/><path d="M408 154 V164"/>
+                  <path d="M372 128 H382"/><path d="M434 128 H444"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <a class="scroll-cue" href="#features">
+          <span>Scroll</span>
+          <span class="scroll-line" aria-hidden="true"></span>
+        </a>
+      </section>
+
+      <!-- ==================== MARQUEE ==================== -->
+      <section class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span>Kyoto</span><i></i><span>Marrakech</span><i></i><span>Machu Picchu</span><i></i>
+          <span>Santorini</span><i></i><span>Cape Town</span><i></i><span>Petra</span><i></i>
+          <span>Patagonia</span><i></i><span>Kathmandu</span><i></i>
+          <span>Kyoto</span><i></i><span>Marrakech</span><i></i><span>Machu Picchu</span><i></i>
+          <span>Santorini</span><i></i><span>Cape Town</span><i></i><span>Petra</span><i></i>
+          <span>Patagonia</span><i></i><span>Kathmandu</span><i></i>
+        </div>
+      </section>
+
+      <!-- ==================== STATS ==================== -->
+      <section class="wrap stats">
+        <div class="stat reveal" style="--i:0">
+          <span class="stat-num" data-count="5">0</span>
+          <span class="stat-label">Continents mapped</span>
+        </div>
+        <div class="stat reveal" style="--i:1">
+          <span class="stat-num" data-count="42" data-suffix="+">0</span>
+          <span class="stat-label">Guided routes</span>
+        </div>
+        <div class="stat reveal" style="--i:2">
+          <span class="stat-num" data-count="18">0</span>
+          <span class="stat-label">Local guide teams</span>
+        </div>
+        <div class="stat reveal" style="--i:3">
+          <span class="stat-num" data-count="96" data-suffix="%">0</span>
+          <span class="stat-label">Travellers who return</span>
+        </div>
+      </section>
+
+      <!-- ==================== FEATURES ==================== -->
+      <section class="wrap section" id="features">
+        <header class="section-head reveal">
+          <p class="eyebrow">Why walk with us</p>
+          <h2>Built by people who have carried the pack.</h2>
+          <p class="section-sub">
+            Every detail on this platform exists because someone was once stranded,
+            over-promised, or handed a route they were not ready for.
+          </p>
+        </header>
+
+        <div class="cards">
+          <article class="card reveal" style="--i:0">
+            <span class="card-icon">
+              <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <circle cx="16" cy="16" r="12.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M21.5 10.5 L18 18 L10.5 21.5 L14 14 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <h3>Honestly graded</h3>
+            <p>
+              Every trek carries a real difficulty — Easy, Moderate or Hard — with duration
+              and available slots stated up front. Nothing is discovered on day three.
+            </p>
+          </article>
+
+          <article class="card card-feature reveal" style="--i:1">
+            <span class="card-icon">
+              <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <path d="M8 27 V6 L24 9.5 L8 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="8" cy="27" r="1.8" fill="currentColor"/>
+                <path d="M14 24 h11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <h3>A named guide, always</h3>
+            <p>
+              A guide is assigned to a departure before it ever opens for booking. You know
+              who is leading, and they know the route by heart — not from a map.
+            </p>
+          </article>
+
+          <article class="card reveal" style="--i:2">
+            <span class="card-icon">
+              <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <circle cx="16" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <circle cx="16" cy="16" r="9.5" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".6"/>
+                <circle cx="16" cy="16" r="14.5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".3"/>
+              </svg>
+            </span>
+            <h3>Live availability</h3>
+            <p>
+              Slots update the moment somebody books. What you see on the trek list is
+              genuinely what is left — no phantom seats, no waiting on a reply.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ==================== HOW IT WORKS ==================== -->
+      <section class="wrap section how" id="how">
+        <header class="section-head reveal">
+          <p class="eyebrow">Three steps</p>
+          <h2>From curiosity to trailhead.</h2>
+        </header>
+
+        <ol class="steps">
+          <li class="step reveal" style="--i:0">
+            <span class="step-num">01</span>
+            <h3>Create your account</h3>
+            <p>One short form. Tell us whether you are travelling or guiding, and you are in.</p>
+          </li>
+          <li class="step reveal" style="--i:1">
+            <span class="step-num">02</span>
+            <h3>Find your route</h3>
+            <p>Read every open trek with its region, grade, dates and remaining slots side by side.</p>
+          </li>
+          <li class="step reveal" style="--i:2">
+            <span class="step-num">03</span>
+            <h3>Reserve your slot</h3>
+            <p>Book instantly. Your guide and your group are waiting on the other side of it.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ==================== ROUTES ==================== -->
+      <section class="wrap section" id="routes">
+        <header class="section-head reveal">
+          <p class="eyebrow">A few of the routes</p>
+          <h2>Five walks, five living cultures.</h2>
+        </header>
+
+        <div class="routes">
+          <article class="route reveal" style="--i:0">
+            <div class="route-art" aria-hidden="true">
+              <svg viewBox="0 0 300 200" focusable="false">
+                <g fill="none" stroke="#EADFC8" stroke-width="2" opacity=".9">
+                  <path d="M60 150 V80 M140 150 V80 M44 80 H156 M52 66 H148"/>
+                  <path d="M60 100 H140"/>
+                  <path d="M196 150 L236 108 L276 150 M206 128 H266"/>
+                  <path d="M236 108 V96"/>
+                </g>
+                <circle cx="236" cy="60" r="15" fill="none" stroke="#C9A227" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="route-body">
+              <div class="route-top">
+                <h3>Kyoto Temple Trail</h3>
+                <span class="pill pill-easy">Easy</span>
+              </div>
+              <p class="route-meta">Japan · 6 days · Spring &amp; autumn departures</p>
+            </div>
+          </article>
+
+          <article class="route reveal" style="--i:1">
+            <div class="route-art" aria-hidden="true">
+              <svg viewBox="0 0 300 200" focusable="false">
+                <g fill="none" stroke="#EADFC8" stroke-width="2" opacity=".9">
+                  <path d="M48 156 V104 A28 28 0 0 1 104 104 V156"/>
+                  <path d="M124 156 V112 A22 22 0 0 1 168 112 V156"/>
+                  <path d="M188 156 V104 A28 28 0 0 1 244 104 V156"/>
+                  <path d="M36 156 H256"/>
+                </g>
+                <g fill="none" stroke="#C9A227" stroke-width="2">
+                  <path d="M146 62 L146 48 M132 76 h28 l-6 -14 h-16 z"/>
+                </g>
+              </svg>
+            </div>
+            <div class="route-body">
+              <div class="route-top">
+                <h3>Atlas &amp; the Souks</h3>
+                <span class="pill pill-moderate">Moderate</span>
+              </div>
+              <p class="route-meta">Morocco · 9 days · High Atlas crossing</p>
+            </div>
+          </article>
+
+          <article class="route reveal" style="--i:2">
+            <div class="route-art" aria-hidden="true">
+              <svg viewBox="0 0 300 200" focusable="false">
+                <path d="M20 168 L86 74 L128 130 L176 56 L246 168 Z" fill="none" stroke="#EADFC8" stroke-width="2" opacity=".9"/>
+                <g stroke="#C9A227" stroke-width="1.6" opacity=".85">
+                  <path d="M70 150 H176 M84 132 H166 M98 114 H154"/>
+                </g>
+                <circle cx="238" cy="52" r="16" fill="none" stroke="#C9A227" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="route-body">
+              <div class="route-top">
+                <h3>Inca Trail to Machu Picchu</h3>
+                <span class="pill pill-hard">Hard</span>
+              </div>
+              <p class="route-meta">Peru · 8 days · Four passes, one ruin</p>
+            </div>
+          </article>
+
+          <article class="route reveal" style="--i:3">
+            <div class="route-art" aria-hidden="true">
+              <svg viewBox="0 0 300 200" focusable="false">
+                <g fill="none" stroke="#EADFC8" stroke-width="2" opacity=".9">
+                  <path d="M56 128 A26 26 0 0 1 108 128 Z"/>
+                  <path d="M56 128 H108 V160 H56 Z"/>
+                  <path d="M140 136 A20 20 0 0 1 180 136 Z"/>
+                  <path d="M140 136 H180 V160 H140 Z"/>
+                  <path d="M204 122 A24 24 0 0 1 252 122 Z"/>
+                  <path d="M204 122 H252 V160 H204 Z"/>
+                </g>
+                <g fill="none" stroke="#C9A227" stroke-width="1.8" opacity=".8">
+                  <path d="M28 178 Q64 166 100 178 T172 178 T244 178 T280 178"/>
+                </g>
+              </svg>
+            </div>
+            <div class="route-body">
+              <div class="route-top">
+                <h3>Santorini Caldera Path</h3>
+                <span class="pill pill-easy">Easy</span>
+              </div>
+              <p class="route-meta">Greece · 5 days · Cliff-edge villages</p>
+            </div>
+          </article>
+
+          <article class="route reveal" style="--i:4">
+            <div class="route-art" aria-hidden="true">
+              <svg viewBox="0 0 300 200" focusable="false">
+                <path d="M28 164 L86 96 H208 L264 164 Z" fill="none" stroke="#EADFC8" stroke-width="2" opacity=".9"/>
+                <path d="M86 96 H208" stroke="#C9A227" stroke-width="2.4"/>
+                <g fill="none" stroke="#EADFC8" stroke-width="1.4" opacity=".55">
+                  <path d="M60 130 H120 M170 130 H236"/>
+                </g>
+                <circle cx="72" cy="56" r="14" fill="none" stroke="#C9A227" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="route-body">
+              <div class="route-top">
+                <h3>Table Mountain Traverse</h3>
+                <span class="pill pill-moderate">Moderate</span>
+              </div>
+              <p class="route-meta">South Africa · 7 days · Two oceans in view</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ==================== VOICES ==================== -->
+      <section class="wrap section voices" id="voices">
+        <figure class="quote reveal">
+          <svg class="quote-mark" viewBox="0 0 60 48" aria-hidden="true" focusable="false">
+            <path d="M24 4 C10 10 4 22 4 34 C4 42 9 46 15 46 C21 46 25 42 25 36 C25 30 21 26 16 26 C15 18 19 11 27 7 Z
+                     M56 4 C42 10 36 22 36 34 C36 42 41 46 47 46 C53 46 57 42 57 36 C57 30 53 26 48 26 C47 18 51 11 59 7 Z"
+                  fill="currentColor"/>
+          </svg>
+          <blockquote>
+            We had walked in nine countries before this one. It was the first time the person
+            waiting at the trailhead already knew our names.
+          </blockquote>
+          <figcaption>Ana &amp; Ravi <span>— Inca Trail, March</span></figcaption>
+        </figure>
+      </section>
+
+      <!-- ==================== CTA BAND ==================== -->
+      <section class="band">
+        <div class="band-lattice" aria-hidden="true"></div>
+        <div class="band-inner reveal">
+          <p class="eyebrow">Your pack is already half packed</p>
+          <h2>The next route opens the moment you sign in.</h2>
+          <div class="hero-cta">
+            <a class="cta cta-gold cta-lg" href="/register">
+              Create your account
+              <svg class="cta-arrow" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                <path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <a class="cta cta-ghost cta-ghost-dark cta-lg" href="/login">Sign in</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="foot">
+      <div class="wrap foot-inner">
+        <div class="foot-brand">
+          <a class="brand" href="#main">
+            <svg class="brand-mark" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+              <circle cx="22" cy="22" r="19" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".55"/>
+              <circle cx="22" cy="22" r="19" fill="none" stroke="#C9A227" stroke-width="1.4" stroke-dasharray="1.5 5"/>
+              <path d="M22 5 L25 20 L22 22 L19 20 Z" fill="#C9A227"/>
+              <path d="M22 39 L19 24 L22 22 L25 24 Z" fill="currentColor" opacity=".7"/>
+            </svg>
+            <span class="brand-name">Tourism Company</span>
+          </a>
+          <p>Guided treks across the world's living cultures. Walk gently, book honestly.</p>
+        </div>
+
+        <nav class="foot-col" aria-label="Explore">
+          <h4>Explore</h4>
+          <a href="#routes">Routes</a>
+          <a href="#how">How it works</a>
+          <a href="#features">Why us</a>
+        </nav>
+
+        <nav class="foot-col" aria-label="Account">
+          <h4>Account</h4>
+          <a href="/login">Sign in</a>
+          <a href="/register">Create account</a>
+        </nav>
+
+        <div class="foot-col">
+          <h4>Destinations</h4>
+          <p class="foot-dest">Kyoto · Marrakech · Machu Picchu · Santorini · Cape Town</p>
+        </div>
+      </div>
+      <div class="wrap foot-fine">
+        <span>&copy; Tourism Company</span>
+        <span>Five continents, one trail at a time.</span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* --- scroll progress bar + condensed nav ------------------------- */
+        var bar = document.getElementById('progressBar');
+        var nav = document.getElementById('nav');
+        var ticking = false;
+
+        function onScroll() {
+          var top = window.scrollY || document.documentElement.scrollTop;
+          var max = document.documentElement.scrollHeight - window.innerHeight;
+          if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? top / max : 0) + ')';
+          if (nav) nav.classList.toggle('is-stuck', top > 24);
+          ticking = false;
+        }
+        addEventListener('scroll', function () {
+          if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+        }, { passive: true });
+        onScroll();
+
+        /* --- reveal on enter -------------------------------------------- */
+        var targets = document.querySelectorAll('.reveal');
+        if (reduced || !('IntersectionObserver' in window)) {
+          targets.forEach(function (el) { el.classList.add('is-visible'); });
+        } else {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+            });
+          }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
+          targets.forEach(function (el) { io.observe(el); });
+        }
+
+        /* --- count up the stat numbers once they are on screen ---------- */
+        var nums = document.querySelectorAll('.stat-num');
+        function run(el) {
+          var end = parseInt(el.dataset.count, 10) || 0;
+          var suffix = el.dataset.suffix || '';
+          if (reduced) { el.textContent = end + suffix; return; }
+          var dur = 1400, t0 = null;
+          function frame(t) {
+            if (t0 === null) t0 = t;
+            var p = Math.min((t - t0) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(end * eased) + suffix;
+            if (p < 1) requestAnimationFrame(frame);
+          }
+          requestAnimationFrame(frame);
+        }
+        if (!('IntersectionObserver' in window)) {
+          nums.forEach(run);
+        } else {
+          var io2 = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) { run(e.target); io2.unobserve(e.target); }
+            });
+          }, { threshold: 0.5 });
+          nums.forEach(function (el) { io2.observe(el); });
+        }
+      })();
+    </script>
+  </body>
+</html>

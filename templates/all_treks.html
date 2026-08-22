@@ -8,60 +8,77 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/main.css" />
-    <title>All treks</title>
+    <link rel="stylesheet" href="/static/app_style.css" />
+    <link rel="stylesheet" href="/static/app_layout.css" />
+    <script src="/static/app.js"></script>
+    <title>All Treks</title>
   </head>
   <body>
     <div class="container">
-      <div><h2 class="center">Tourism Company</h2></div>
+      <div>
+        <h2 class="center">Tourism Company</h2>
+        {% include "_topbar.html" %}
+      </div>
 
       <div class="dashboard-form">
         <h3 class="center">Treks</h3>
 
         <div class="center">
-          <input type="text" name="searchtrek" /> |
-          <input type="button" value="Search" />
+          <form action="/all_treks" method="GET">
+            <input type="text" name="searchtrek" value="{{ search_word }}" placeholder="Search treks..." /> |
+            <input type="submit" value="Search" />
+          </form>
         </div>
 
         <div class="table-wrap">
           <table class="center" name="Treks" border="1">
-            <caption class="center">Treks</caption>
+            <caption class="center">
+              Treks{% if search_word %} matching "{{ search_word }}"{% endif %}
+            </caption>
             <tr>
-              <th>trek_name</th>
-              <th>locations</th>
-              <th>difficulty</th>
-              <th>duration_days</th>
-              <th>avalaible_slots</th>
-              <th>ass_staff_id</th>
-              <th>status</th>
-              <th>start_date</th>
-              <th>end_date</th>
+              <th>Trek Name</th>
+              <th>Location</th>
+              <th>Difficulty</th>
+              <th>Duration</th>
+              <th>Slots</th>
+              <th>Assigned Staff</th>
+              <th>Status</th>
+              <th>Start Date</th>
+              <th>End Date</th>
               <th>Edit</th>
               <th>Delete</th>
             </tr>
             {% for t in all_t %}
             <tr>
-              <td>{{ t.trek_name }}</td>
-              <td>{{ t.location }}</td>
-              <td><span class="pill pill-{{ t.difficulty|lower }}">{{ t.difficulty }}</span></td>
-              <td>{{ t.duration_days }}</td>
-              <td>{{ t.avalaible_slots }}</td>
-              <td>{{ t.ass_staff_id }}</td>
-              <td><span class="pill pill-{{ t.status|lower }}">{{ t.status }}</span></td>
-              <td>{{ t.start_date }}</td>
-              <td>{{ t.end_date }}</td>
-              <td>
+              <td data-label="Trek Name">{{ t.trek_name }}</td>
+              <td data-label="Location">{{ t.location }}</td>
+              <td data-label="Difficulty"><span class="pill pill-{{ t.difficulty|lower }}">{{ t.difficulty }}</span></td>
+              <td data-label="Duration">{{ t.duration_days }} day{{ 's' if t.duration_days != 1 else '' }}</td>
+              <td data-label="Slots">{{ t.available_slots }}</td>
+              <td data-label="Assigned Staff">{{ staff_names.get(t.ass_staff_id, 'Unassigned') }}</td>
+              <td data-label="Status"><span class="pill pill-{{ t.status|lower }}">{{ t.status }}</span></td>
+              <td data-label="Start Date">{{ t.start_date }}</td>
+              <td data-label="End Date">{{ t.end_date }}</td>
+              <td data-label="Edit">
                 <a href="/edit_trek/{{ t.trek_id }}" class="button-link">Edit</a>
               </td>
-              <td>
+              <td data-label="Delete">
                 <form action="/delete_trek/{{ t.trek_id }}" method="POST" style="display:inline;">
                   <button type="submit" class="button-link">Delete</button>
                 </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="is-empty">
+              <td colspan="11">
+                {% if search_word %}No treks match "{{ search_word }}".{% else %}No treks yet - add the first one.{% endif %}
               </td>
             </tr>
             {% endfor %}
           </table>
         </div>
       </div>
+      {% include "_appfoot.html" %}
     </div>
   </body>
 </html>

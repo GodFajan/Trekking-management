@@ -8,17 +8,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/main.css" />
+    <link rel="stylesheet" href="/static/app_style.css" />
+    <link rel="stylesheet" href="/static/app_layout.css" />
+    <script src="/static/app.js"></script>
     <title>Staff Dashboard</title>
   </head>
   <body>
     <div class="container">
-      <div><h2 class="center">Tourism Company</h2></div>
+      <div>
+        <h2 class="center">Tourism Company</h2>
+        {% include "_topbar.html" %}
+      </div>
 
       <div class="dashboard-form">
-        <h3 class="center">Staff Dashboard</h3>
+        <h3 class="center">Staff Dashboard{% if t2_user %} — {{ t2_user.name }}{% endif %}</h3>
 
         <div class="stat-wrap">
-          <table class = "center" name = "Dashboard" border = "1">
+          <table class="center" name="Dashboard" border="1">
             <caption class="center">Dashboard</caption>
             <tr>
               <th>Assigned Treks</th>
@@ -33,8 +39,29 @@
           </table>
         </div>
 
-        <div class="table-wrap">
-          <table class = "center" name = "Asstreks" border = "1">
+        <div class="quick-grid">
+          <a class="quick" href="#assigned">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="M2 17 L7 8 L10 13 L13 6 L18 17 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+            <h4 class="quick-title">Assigned treks <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">Every departure you are leading, with its live participant count and status.</p>
+            <p class="quick-metric">{{ ass_treks }} assigned</p>
+          </a>
+          <a class="quick" href="#assigned">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="M3 6.4h14M3 13.6h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="7.4" cy="6.4" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="13" cy="13.6" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+            <h4 class="quick-title">Slots &amp; status <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">Open Manage on a trek to change how many slots are left or close it to new bookings.</p>
+            <p class="quick-metric">{{ open_treks }} open</p>
+          </a>
+          <a class="quick" href="#assigned">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><circle cx="10" cy="10" r="7.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.6 10.3l2.4 2.4 4.4-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h4 class="quick-title">Wrap a trek up <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">Mark a departure complete once it is walked — it moves into your travellers' history.</p>
+            <p class="quick-metric">{{ total_part }} travellers</p>
+          </a>
+        </div>
+
+        <div class="table-wrap reveal-up" id="assigned">
+          <table class="center" name="Asstreks" border="1">
             <caption class="center">Assigned Treks</caption>
             <tr>
               <th>Trek Name</th>
@@ -46,19 +73,22 @@
             </tr>
             {% for t, p_count in trek_data %}
               <tr>
-                <td>{{ t.trek_name }}</td>
-                <td>{{ t.location }}</td>
-                <td>{{ p_count }}</td>
-                <td>{{ t.avalaible_slots }}</td>
-                <td><span class="pill pill-{{ t.status|lower }}">{{ t.status }}</span></td>
-                <td>
+                <td data-label="Trek Name">{{ t.trek_name }}</td>
+                <td data-label="Locations">{{ t.location }}</td>
+                <td data-label="Participants">{{ p_count }}</td>
+                <td data-label="Slots">{{ t.available_slots }}</td>
+                <td data-label="Status"><span class="pill pill-{{ t.status|lower }}">{{ t.status }}</span></td>
+                <td data-label="Action">
                   <a href="/staff_mng/{{ t.trek_id }}" class="button-link">Manage</a>
                 </td>
               </tr>
+            {% else %}
+              <tr class="is-empty"><td colspan="6">No treks are assigned to you yet.</td></tr>
             {% endfor %}
           </table>
         </div>
       </div>
+      {% include "_appfoot.html" %}
     </div>
   </body>
 </html>

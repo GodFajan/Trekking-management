@@ -8,13 +8,28 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/main.css" />
+    <link rel="stylesheet" href="/static/app_style.css" />
+    <link rel="stylesheet" href="/static/app_layout.css" />
+    <script src="/static/app.js"></script>
     <title>Trek Management</title>
   </head>
   <body>
     <div class="container">
-      <div><h2 class="center">Tourism Company</h2></div>
+      <div>
+        <h2 class="center">Tourism Company</h2>
+        {% include "_topbar.html" %}
+      </div>
 
       <div class="dashboard-form">
+        {% if session.pop('mng_suc', None) %}
+          <div class="flash">Trek updated successfully</div>
+        {% endif %}
+        {% if session.pop('comp_suc', None) %}
+          <div class="flash">Trek marked as completed — every booking on it is now closed out</div>
+        {% endif %}
+        {% if session.pop('mng_err', None) %}
+          <div class="flash flash-warn">Available slots must be a whole number, zero or above</div>
+        {% endif %}
 
         <h3 class="center">{{ t.trek_name }}</h3>
 
@@ -31,19 +46,23 @@
                 <th>Action</th>
               </tr>
               <tr>
-                <td>{{ t.location }}</td>
-                <td>{{ t.start_date }}</td>
-                <td>{{ t.end_date }}</td>
-                <td>
-                  <input type="text" name="Aslots" value="{{ t.avalaible_slots }}" />
+                <td data-label="Location">{{ t.location }}</td>
+                <td data-label="Start Date">{{ t.start_date }}</td>
+                <td data-label="End Date">{{ t.end_date }}</td>
+                <td data-label="Available Slot">
+                  <input type="number" name="Aslots" min="0" step="1" value="{{ t.available_slots }}" required />
                 </td>
-                <td>
+                <td data-label="Status">
+                  {# "Completed" is listed so a finished trek shows its real
+                     status — otherwise neither option matched and Update
+                     would quietly reopen it. #}
                   <select name="stype">
                     <option value="Open" {% if t.status == "Open" %}selected{% endif %}>Open</option>
                     <option value="Closed" {% if t.status == "Closed" %}selected{% endif %}>Closed</option>
+                    <option value="Completed" {% if t.status == "Completed" %}selected{% endif %}>Completed</option>
                   </select>
                 </td>
-                <td>
+                <td data-label="Action">
                   <button type="submit">Update</button>
                 </td>
               </tr>
@@ -57,7 +76,7 @@
           </form>
         </div>
 
-        <div class="table-wrap">
+        <div class="table-wrap reveal-up">
           <table class="center" name="terk_part" border="1">
             <caption class="center">Participants</caption>
             <tr>
@@ -67,17 +86,19 @@
               <th>Status</th>
             </tr>
             {% for b, u in participants %}
-            <tr>
-              <td>{{ u.name }}</td>
-              <td>{{ u.email }}</td>
-              <td>{{ b.booking_date }}</td>
-              <td><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
-            </tr>
+              <tr>
+                <td data-label="User Name">{{ u.name }}</td>
+                <td data-label="Email">{{ u.email }}</td>
+                <td data-label="Booking Date">{{ b.booking_date }}</td>
+                <td data-label="Status"><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
+              </tr>
+            {% else %}
+              <tr class="is-empty"><td colspan="4">Nobody has booked this trek yet.</td></tr>
             {% endfor %}
           </table>
         </div>
-
       </div>
+      {% include "_appfoot.html" %}
     </div>
   </body>
 </html>

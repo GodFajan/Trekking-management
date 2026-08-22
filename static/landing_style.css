@@ -1,0 +1,1149 @@
+/* ==========================================================================
+   landing_style.css — page overrides for templates/landing.html
+   Uses the tokens, ambient backdrop and .pill styles from main.css, which
+   must be linked first. Nothing here is shared with the auth or dashboard
+   pages, so it only loads on the landing page.
+   ========================================================================== */
+
+/* Animatable custom property for the rotating gold border on the
+   featured card. Needs @property to interpolate at all. */
+@property --angle{
+  syntax:"<angle>";
+  inherits:false;
+  initial-value:0deg;
+}
+
+/* --------------------------------------------------------------------------
+   Page shell — main.css centres a single card in a flex body; the landing
+   page is a long scrolling document instead.
+   -------------------------------------------------------------------------- */
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:104px;
+}
+body{
+  display:block;
+  padding:0;
+  overflow-x:clip;              /* clip, not hidden — keeps the nav sticky */
+}
+
+.wrap{
+  width:min(1240px, 100% - clamp(32px,6vw,96px));
+  margin-inline:auto;
+}
+
+/* Shared eyebrow: small tracked label with a gold hairline lead-in. */
+.eyebrow{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:0 0 18px;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--maroon);
+}
+.eyebrow::before{
+  content:"";
+  width:34px;
+  height:1px;
+  flex:none;
+  background:linear-gradient(90deg,var(--gold),rgba(201,162,39,0));
+}
+
+.skip-link{
+  position:absolute;
+  left:-9999px;
+  top:0;
+}
+.skip-link:focus{
+  left:16px;
+  top:16px;
+  z-index:200;
+  padding:11px 18px;
+  border-radius:10px;
+  background:var(--maroon);
+  color:#FFF8EA;
+  font-size:.85rem;
+  font-weight:600;
+  text-decoration:none;
+}
+
+/* --------------------------------------------------------------------------
+   Scroll progress bar
+   -------------------------------------------------------------------------- */
+.scroll-progress{
+  position:fixed;
+  inset:0 0 auto 0;
+  z-index:100;
+  height:3px;
+  pointer-events:none;
+}
+.scroll-progress span{
+  display:block;
+  height:100%;
+  transform:scaleX(0);
+  transform-origin:left center;
+  background:linear-gradient(90deg,var(--maroon) 0%,var(--gold) 68%,var(--gold-soft) 100%);
+  box-shadow:0 0 12px rgba(201,162,39,.65);
+}
+
+/* --------------------------------------------------------------------------
+   Navigation
+   -------------------------------------------------------------------------- */
+.nav{
+  position:sticky;
+  top:0;
+  z-index:50;
+  padding:18px 0;
+  transition:
+    padding .28s var(--ease),
+    background-color .28s var(--ease),
+    box-shadow .28s var(--ease);
+}
+.nav.is-stuck{
+  padding:10px 0;
+  background:rgba(250,246,236,.82);
+  backdrop-filter:blur(14px) saturate(1.25);
+  box-shadow:
+    0 1px 0 rgba(201,162,39,.28),
+    0 14px 34px -24px rgba(44,14,25,.55);
+}
+.nav-inner{
+  width:min(1240px, 100% - clamp(24px,6vw,96px));
+  margin-inline:auto;
+  display:flex;
+  align-items:center;
+  gap:clamp(12px,2.4vw,40px);
+}
+
+.brand{
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  color:var(--maroon-dark);
+  text-decoration:none;
+}
+.brand-mark{
+  width:30px;
+  height:30px;
+  flex:none;
+  transition:transform .5s var(--ease);
+}
+.brand:hover .brand-mark{transform:rotate(60deg);}
+.brand-name{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.22rem;
+  font-weight:700;
+  letter-spacing:-.005em;
+  white-space:nowrap;
+}
+
+.nav-links{
+  display:flex;
+  gap:clamp(14px,2vw,30px);
+  margin-left:auto;
+}
+.nav-links a{
+  position:relative;
+  padding:6px 1px;
+  font-size:.85rem;
+  font-weight:500;
+  color:var(--ink);
+  text-decoration:none;
+}
+.nav-links a::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0 0;
+  height:1.5px;
+  border-radius:2px;
+  background:linear-gradient(90deg,var(--gold),var(--maroon));
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform .32s var(--ease);
+}
+.nav-links a:hover::after{transform:scaleX(1);}
+
+.nav-actions{
+  display:flex;
+  gap:10px;
+  margin-left:auto;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons — same gradient language as .button-link in main.css, sized up
+   for a landing page and with a sheen sweep on hover.
+   -------------------------------------------------------------------------- */
+.cta{
+  position:relative;
+  overflow:hidden;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:12px 24px;
+  border:1px solid transparent;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--maroon-lit) 0%,var(--maroon) 50%,var(--maroon-dark) 100%);
+  color:#FFF8EA;
+  font-family:'Poppins',system-ui,sans-serif;
+  font-size:.84rem;
+  font-weight:600;
+  letter-spacing:.03em;
+  line-height:1.4;
+  text-decoration:none;
+  white-space:nowrap;
+  cursor:pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 10px 22px -12px rgba(74,20,32,.7);
+  transition:
+    transform .18s var(--ease),
+    box-shadow .22s var(--ease),
+    filter .22s var(--ease),
+    background-color .22s var(--ease);
+}
+.cta::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(105deg,transparent 32%,rgba(255,248,234,.34) 50%,transparent 68%);
+  transform:translateX(-130%);
+  transition:transform .75s var(--ease);
+}
+.cta:hover{
+  transform:translateY(-2px);
+  filter:saturate(1.08) brightness(1.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.24),
+    0 18px 32px -14px rgba(74,20,32,.65),
+    0 0 0 1px rgba(201,162,39,.45);
+}
+.cta:hover::after{transform:translateX(130%);}
+.cta:active{transform:translateY(0);}
+.cta-lg{
+  padding:16px 32px;
+  font-size:.92rem;
+}
+.cta-arrow{
+  width:16px;
+  height:16px;
+  flex:none;
+  transition:transform .24s var(--ease);
+}
+.cta:hover .cta-arrow{transform:translateX(4px);}
+
+.cta-ghost{
+  background:transparent;
+  color:var(--maroon);
+  border-color:rgba(110,30,43,.32);
+  box-shadow:none;
+}
+.cta-ghost:hover{
+  background:rgba(110,30,43,.06);
+  border-color:var(--maroon);
+  filter:none;
+  box-shadow:none;
+}
+.cta-ghost-dark{
+  color:var(--gold-pale);
+  border-color:rgba(234,223,200,.42);
+}
+.cta-ghost-dark:hover{
+  background:rgba(250,246,236,.1);
+  border-color:var(--gold-soft);
+}
+.cta-gold{
+  background:linear-gradient(135deg,var(--gold-soft) 0%,var(--gold) 58%,#A8871B 100%);
+  color:var(--maroon-dark);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    0 12px 26px -12px rgba(168,135,27,.7);
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+.hero{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:min(92vh,940px);
+  padding:clamp(40px,6vw,90px) 0 clamp(40px,5vw,80px);
+}
+.hero-aura{
+  position:absolute;
+  inset:-20% -12%;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    radial-gradient(42% 42% at 22% 26%, rgba(110,30,43,.30), transparent 66%),
+    radial-gradient(38% 38% at 80% 20%, rgba(201,162,39,.26), transparent 64%),
+    radial-gradient(46% 46% at 62% 86%, rgba(31,75,67,.24), transparent 66%);
+  animation:aura-drift 24s ease-in-out infinite alternate;
+}
+@keyframes aura-drift{
+  0%  {transform:translate3d(0,0,0) scale(1);}
+  50% {transform:translate3d(-2.5%,2%,0) scale(1.07);}
+  100%{transform:translate3d(2%,-2.5%,0) scale(1.03);}
+}
+.hero-lattice{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(110,30,43,.07) 0 1px, transparent 1px 30px),
+    repeating-linear-gradient(-45deg, rgba(110,30,43,.07) 0 1px, transparent 1px 30px);
+  mask-image:radial-gradient(78% 68% at 50% 42%,#000 0%,transparent 80%);
+  animation:lattice-pan 44s linear infinite;
+}
+@keyframes lattice-pan{
+  to{background-position:120px 120px, -120px 120px;}
+}
+
+.hero-inner{
+  width:min(1240px, 100% - clamp(32px,6vw,96px));
+  margin-inline:auto;
+  display:grid;
+  grid-template-columns:1fr;
+  align-items:center;
+  gap:clamp(40px,5vw,72px);
+}
+@media (min-width:960px){
+  .hero-inner{grid-template-columns:1.06fr .94fr;}
+}
+
+.hero-title{
+  margin:0 0 22px;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(2.85rem,6.6vw,5.3rem);
+  font-weight:700;
+  line-height:1.02;
+  letter-spacing:-.022em;
+  color:var(--maroon-dark);
+}
+.hero-title .line{
+  display:block;
+  overflow:hidden;
+  padding-bottom:.07em;
+}
+.hero-title .word{
+  display:inline-block;
+  animation:word-rise .95s var(--ease) both;
+  animation-delay:calc(var(--i) * 95ms + 150ms);
+}
+@keyframes word-rise{
+  from{translate:0 112%;}
+  to  {translate:0 0;}
+}
+/* Gold-leaf words with a slow travelling highlight. */
+.hero-title .shimmer{
+  background:linear-gradient(100deg,
+    var(--maroon) 0%, var(--gold) 32%, var(--gold-soft) 50%, var(--gold) 68%, var(--maroon) 100%);
+  background-size:260% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation-name:word-rise, shimmer;
+  animation-duration:.95s, 7s;
+  animation-timing-function:var(--ease), linear;
+  animation-iteration-count:1, infinite;
+  animation-fill-mode:both, none;
+  animation-delay:calc(var(--i) * 95ms + 150ms), 1.3s;
+}
+@keyframes shimmer{
+  to{background-position:-260% 0;}
+}
+
+.hero-sub{
+  margin:0 0 32px;
+  max-width:52ch;
+  font-size:clamp(1rem,1.2vw,1.1rem);
+  font-weight:300;
+  line-height:1.76;
+  color:#5C4A43;
+  animation:fade-up .9s var(--ease) .55s both;
+}
+@keyframes fade-up{
+  from{opacity:0; translate:0 18px;}
+  to  {opacity:1; translate:0 0;}
+}
+
+.hero-cta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  animation:fade-up .9s var(--ease) .72s both;
+}
+
+.hero-trust{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 24px;
+  margin:34px 0 0;
+  padding:0;
+  list-style:none;
+  font-size:.8rem;
+  letter-spacing:.04em;
+  color:var(--muted);
+  animation:fade-up .9s var(--ease) .88s both;
+}
+.hero-trust li{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.hero-trust li::before{
+  content:"";
+  width:6px;
+  height:6px;
+  flex:none;
+  rotate:45deg;
+  background:var(--gold);
+}
+
+/* Animated compass composition ------------------------------------------- */
+.hero-art{
+  position:relative;
+  justify-self:center;
+  width:min(100%,560px);
+  animation:art-in 1.5s var(--ease) .25s both;
+}
+@keyframes art-in{
+  from{opacity:0; scale:.9; rotate:-6deg;}
+  to  {opacity:1; scale:1;  rotate:0deg;}
+}
+/* Dark disc so the cream + gold linework reads on a light page. */
+.hero-art::before{
+  content:"";
+  position:absolute;
+  inset:2%;
+  z-index:-1;
+  border-radius:50%;
+  background:radial-gradient(circle at 34% 26%,
+    var(--maroon-lit) 0%, var(--maroon) 40%, var(--maroon-dark) 72%, var(--plum) 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,248,234,.16),
+    0 44px 86px -34px rgba(44,14,25,.65);
+}
+.hero-art svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.hero-art .ring-outer,
+.hero-art .ring-mid,
+.hero-art .needle,
+.hero-art .sun{
+  transform-box:fill-box;
+  transform-origin:center;
+}
+.hero-art .ring-outer{animation:spin 72s linear infinite;}
+.hero-art .ring-mid{animation:spin 46s linear infinite reverse;}
+.hero-art .needle{animation:needle-sway 9s ease-in-out infinite;}
+.hero-art .sun{animation:sun-pulse 5s ease-in-out infinite;}
+.hero-art .wave{animation:wave-slide 9s ease-in-out infinite alternate;}
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to  {transform:rotate(360deg);}
+}
+@keyframes needle-sway{
+  0%,100%{transform:rotate(-7deg);}
+  50%    {transform:rotate(9deg);}
+}
+@keyframes sun-pulse{
+  0%,100%{transform:scale(1);   opacity:.7;}
+  50%    {transform:scale(1.08);opacity:1;}
+}
+@keyframes wave-slide{
+  from{transform:translateX(-14px);}
+  to  {transform:translateX(14px);}
+}
+
+.scroll-cue{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin:clamp(34px,4vw,58px) auto 0;
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-decoration:none;
+  animation:fade-up .9s var(--ease) 1.1s both;
+}
+.scroll-cue:hover{color:var(--maroon);}
+.scroll-line{
+  position:relative;
+  overflow:hidden;
+  width:1px;
+  height:52px;
+  background:linear-gradient(var(--gold),rgba(201,162,39,0));
+}
+.scroll-line::after{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:15px;
+  background:var(--maroon);
+  animation:cue 2.4s var(--ease) infinite;
+}
+@keyframes cue{
+  0%      {transform:translateY(-17px);}
+  70%,100%{transform:translateY(56px);}
+}
+
+/* --------------------------------------------------------------------------
+   Destination marquee
+   -------------------------------------------------------------------------- */
+.marquee{
+  overflow:hidden;
+  padding:22px 0;
+  border-block:1px solid rgba(201,162,39,.3);
+  background:linear-gradient(118deg,var(--maroon-lit) 0%,var(--maroon) 44%,var(--maroon-dark) 100%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 7%,#000 93%,transparent 100%);
+}
+.marquee-track{
+  display:flex;
+  align-items:center;
+  width:max-content;
+  animation:marquee 40s linear infinite;
+}
+.marquee:hover .marquee-track{animation-play-state:paused;}
+@keyframes marquee{
+  to{transform:translateX(-50%);}
+}
+.marquee-track span{
+  padding:0 clamp(20px,3vw,46px);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(1.4rem,2.6vw,2.1rem);
+  font-weight:600;
+  letter-spacing:.01em;
+  color:var(--gold-pale);
+  white-space:nowrap;
+}
+.marquee-track i{
+  width:7px;
+  height:7px;
+  flex:none;
+  rotate:45deg;
+  background:var(--gold);
+}
+
+/* --------------------------------------------------------------------------
+   Stat strip
+   -------------------------------------------------------------------------- */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:clamp(14px,2vw,22px);
+  padding-top:clamp(44px,6vw,84px);
+}
+@media (min-width:840px){
+  .stats{grid-template-columns:repeat(4,1fr);}
+}
+.stat{
+  position:relative;
+  overflow:hidden;
+  padding:clamp(20px,2.4vw,30px) clamp(18px,2vw,26px);
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:linear-gradient(180deg,var(--surface) 0%,var(--surface-sunk) 100%);
+  box-shadow:
+    0 1px 2px rgba(44,14,25,.04),
+    0 20px 38px -30px rgba(44,14,25,.5);
+}
+.stat::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:2px;
+  background:linear-gradient(90deg,rgba(201,162,39,0),var(--gold),rgba(201,162,39,0));
+}
+.stat-num{
+  display:block;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(2.4rem,4.6vw,3.4rem);
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-.02em;
+  color:var(--maroon-dark);
+  font-variant-numeric:tabular-nums;
+}
+.stat-label{
+  display:block;
+  margin-top:11px;
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   Generic section + heading
+   -------------------------------------------------------------------------- */
+.section{padding:clamp(58px,8vw,120px) 0;}
+.section-head{
+  max-width:66ch;
+  margin-bottom:clamp(32px,4vw,56px);
+}
+.section-head h2{
+  margin:0 0 16px;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(2rem,4.2vw,3.15rem);
+  font-weight:700;
+  line-height:1.08;
+  letter-spacing:-.018em;
+  color:var(--maroon-dark);
+}
+.section-sub{
+  margin:0;
+  max-width:56ch;
+  font-size:1.02rem;
+  font-weight:300;
+  line-height:1.76;
+  color:#5C4A43;
+}
+
+/* --------------------------------------------------------------------------
+   Feature cards
+   -------------------------------------------------------------------------- */
+.cards{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:clamp(18px,2.2vw,26px);
+}
+@media (min-width:840px){
+  .cards{grid-template-columns:repeat(3,1fr);}
+}
+.card{
+  position:relative;
+  overflow:hidden;
+  padding:clamp(26px,2.6vw,36px);
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:var(--surface);
+  box-shadow:
+    0 1px 2px rgba(44,14,25,.04),
+    0 22px 44px -34px rgba(44,14,25,.55);
+  transition:
+    transform .32s var(--ease),
+    box-shadow .32s var(--ease),
+    border-color .32s var(--ease);
+}
+.card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(201,162,39,.5);
+  box-shadow:
+    0 1px 2px rgba(44,14,25,.05),
+    0 34px 62px -34px rgba(44,14,25,.55);
+}
+.card-icon{
+  display:inline-grid;
+  place-items:center;
+  width:54px;
+  height:54px;
+  margin-bottom:20px;
+  border:1px solid rgba(201,162,39,.42);
+  border-radius:16px;
+  background:linear-gradient(140deg,rgba(110,30,43,.08),rgba(201,162,39,.14));
+  color:var(--maroon);
+  transition:transform .38s var(--ease), color .3s var(--ease);
+}
+.card:hover .card-icon{
+  transform:rotate(-8deg) scale(1.07);
+  color:var(--maroon-dark);
+}
+.card-icon svg{width:26px;height:26px;}
+.card h3{
+  margin:0 0 12px;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.52rem;
+  font-weight:700;
+  letter-spacing:-.008em;
+  color:var(--maroon-dark);
+}
+.card p{
+  margin:0;
+  font-size:.94rem;
+  font-weight:300;
+  line-height:1.74;
+  color:#5C4A43;
+}
+
+/* Middle card gets a slowly rotating gold-leaf border. */
+.card-feature{
+  border:1px solid transparent;
+  background:
+    linear-gradient(var(--surface),var(--surface)) padding-box,
+    conic-gradient(from var(--angle),
+      rgba(201,162,39,.14) 0%, var(--gold) 12%, rgba(110,30,43,.55) 34%,
+      rgba(201,162,39,.14) 56%, var(--gold) 78%, rgba(201,162,39,.14) 100%) border-box;
+  animation:angle-spin 9s linear infinite;
+}
+@keyframes angle-spin{
+  to{--angle:360deg;}
+}
+
+/* --------------------------------------------------------------------------
+   How it works
+   -------------------------------------------------------------------------- */
+.steps{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:clamp(26px,3vw,34px);
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+@media (min-width:840px){
+  .steps{grid-template-columns:repeat(3,1fr);}
+  /* hairline linking the three numbered discs */
+  .steps::before{
+    content:"";
+    position:absolute;
+    top:34px;
+    left:9%;
+    right:9%;
+    height:1px;
+    background:linear-gradient(90deg,
+      rgba(201,162,39,0),rgba(201,162,39,.65) 18%,rgba(201,162,39,.65) 82%,rgba(201,162,39,0));
+  }
+}
+.step{position:relative;}
+.step-num{
+  display:inline-grid;
+  place-items:center;
+  width:68px;
+  height:68px;
+  margin-bottom:20px;
+  border:1px solid rgba(201,162,39,.5);
+  border-radius:50%;
+  background:var(--cream);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--maroon);
+  box-shadow:
+    0 0 0 7px var(--cream),
+    0 14px 28px -20px rgba(44,14,25,.7);
+  transition:transform .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease);
+}
+.step:hover .step-num{
+  transform:translateY(-4px);
+  border-color:var(--gold);
+  color:var(--maroon-dark);
+}
+.step h3{
+  margin:0 0 10px;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.42rem;
+  font-weight:700;
+  color:var(--maroon-dark);
+}
+.step p{
+  margin:0;
+  max-width:38ch;
+  font-size:.93rem;
+  font-weight:300;
+  line-height:1.74;
+  color:#5C4A43;
+}
+
+/* --------------------------------------------------------------------------
+   Route cards
+   -------------------------------------------------------------------------- */
+.routes{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:clamp(18px,2.2vw,24px);
+}
+@media (min-width:640px){
+  .routes{grid-template-columns:repeat(2,1fr);}
+}
+@media (min-width:1060px){
+  .routes{grid-template-columns:repeat(3,1fr);}
+}
+.route{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:var(--surface);
+  box-shadow:
+    0 1px 2px rgba(44,14,25,.04),
+    0 22px 44px -34px rgba(44,14,25,.55);
+  transition:
+    transform .32s var(--ease),
+    box-shadow .32s var(--ease),
+    border-color .32s var(--ease);
+}
+.route:hover{
+  transform:translateY(-6px);
+  border-color:rgba(201,162,39,.5);
+  box-shadow:
+    0 1px 2px rgba(44,14,25,.05),
+    0 34px 62px -34px rgba(44,14,25,.55);
+}
+.route-art{
+  position:relative;
+  overflow:hidden;
+  aspect-ratio:3 / 2;
+  background:linear-gradient(150deg,var(--maroon-lit) 0%,var(--maroon) 46%,var(--maroon-dark) 100%);
+}
+.route-art::before{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(201,162,39,.15) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(-45deg, rgba(201,162,39,.15) 0 1px, transparent 1px 22px);
+  mask-image:radial-gradient(90% 80% at 25% 10%,#000,transparent 78%);
+}
+.route-art svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  transition:transform .65s var(--ease);
+}
+.route:hover .route-art svg{transform:scale(1.07);}
+.route-body{padding:20px 22px 24px;}
+.route-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:9px;
+}
+.route-top h3{
+  margin:0;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.3rem;
+  font-weight:700;
+  line-height:1.22;
+  color:var(--maroon-dark);
+}
+.route-top .pill{flex:none;}
+.route-meta{
+  margin:0;
+  font-size:.82rem;
+  letter-spacing:.02em;
+  color:var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   Pull quote
+   -------------------------------------------------------------------------- */
+.quote{
+  max-width:78ch;
+  margin:0 auto;
+  padding:clamp(34px,4vw,58px) clamp(24px,3.4vw,52px);
+  border:1px solid rgba(201,162,39,.34);
+  border-radius:28px;
+  background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(250,246,236,.72));
+  backdrop-filter:blur(4px);
+  box-shadow:0 34px 66px -42px rgba(44,14,25,.55);
+  text-align:center;
+}
+.quote-mark{
+  display:block;
+  width:46px;
+  margin:0 auto 22px;
+  color:var(--gold);
+  opacity:.8;
+}
+.quote blockquote{
+  margin:0 0 24px;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(1.5rem,3vw,2.3rem);
+  font-weight:500;
+  line-height:1.34;
+  letter-spacing:-.01em;
+  color:var(--maroon-dark);
+}
+.quote figcaption{
+  font-size:.82rem;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--maroon);
+}
+.quote figcaption span{
+  display:block;
+  margin-top:7px;
+  font-weight:400;
+  letter-spacing:.02em;
+  text-transform:none;
+  color:var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   Closing CTA band
+   -------------------------------------------------------------------------- */
+.band{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  padding:clamp(56px,8vw,112px) 0;
+  border-block:1px solid rgba(201,162,39,.34);
+  background:linear-gradient(140deg,
+    var(--maroon-lit) 0%,var(--maroon) 40%,var(--maroon-dark) 74%,var(--plum) 100%);
+  text-align:center;
+}
+.band-lattice{
+  position:absolute;
+  inset:-30%;
+  z-index:-1;
+  pointer-events:none;
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(201,162,39,.16) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(-45deg, rgba(201,162,39,.16) 0 1px, transparent 1px 26px),
+    radial-gradient(circle, rgba(234,223,200,.2) 0 1.4px, transparent 2px);
+  background-size:auto,auto,52px 52px;
+  mask-image:radial-gradient(70% 90% at 50% 50%,#000,transparent 78%);
+  animation:lattice-pan 52s linear infinite;
+}
+.band-inner{
+  width:min(820px, 100% - clamp(32px,6vw,96px));
+  margin-inline:auto;
+}
+.band .eyebrow{
+  justify-content:center;
+  color:var(--gold-soft);
+}
+.band .eyebrow::before{
+  background:linear-gradient(90deg,rgba(201,162,39,0),var(--gold));
+}
+.band .eyebrow::after{
+  content:"";
+  width:34px;
+  height:1px;
+  flex:none;
+  background:linear-gradient(90deg,var(--gold),rgba(201,162,39,0));
+}
+.band h2{
+  margin:0 0 34px;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(2rem,4.6vw,3.4rem);
+  font-weight:700;
+  line-height:1.08;
+  letter-spacing:-.018em;
+  color:var(--cream);
+  background:linear-gradient(96deg,#FFF8EA 0%,var(--gold-pale) 52%,var(--gold-soft) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.band .hero-cta{
+  justify-content:center;
+  animation:none;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.foot{
+  padding:clamp(46px,6vw,80px) 0 30px;
+  background:var(--cream);
+  border-top:1px solid var(--line);
+}
+.foot-inner{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:clamp(26px,3vw,40px);
+}
+@media (min-width:780px){
+  .foot-inner{grid-template-columns:1.7fr 1fr 1fr 1.3fr;}
+}
+.foot-brand p{
+  margin:16px 0 0;
+  max-width:34ch;
+  font-size:.86rem;
+  font-weight:300;
+  line-height:1.7;
+  color:var(--muted);
+}
+.foot-col{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+}
+.foot-col h4{
+  margin:0 0 5px;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--maroon);
+}
+.foot-col a{
+  width:fit-content;
+  font-size:.87rem;
+  color:#5C4A43;
+  text-decoration:none;
+  transition:color .16s var(--ease);
+}
+.foot-col a:hover{
+  color:var(--maroon);
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+.foot-dest{
+  margin:0;
+  font-size:.84rem;
+  line-height:1.85;
+  color:var(--muted);
+}
+.foot-fine{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:10px 24px;
+  margin-top:clamp(32px,4vw,52px);
+  padding-top:22px;
+  border-top:1px solid var(--line);
+  font-size:.76rem;
+  letter-spacing:.03em;
+  color:var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   Scroll reveal
+   -------------------------------------------------------------------------- */
+.reveal{
+  opacity:0;
+  translate:0 26px;
+  transition:opacity .8s var(--ease), translate .8s var(--ease);
+  transition-delay:calc(var(--i,0) * 90ms);
+}
+.reveal.is-visible{
+  opacity:1;
+  translate:0 0;
+}
+/* If scripting is unavailable the observer never runs — show everything. */
+@media (scripting:none){
+  .reveal{opacity:1;translate:0 0;}
+}
+
+/* --------------------------------------------------------------------------
+   Focus states
+   -------------------------------------------------------------------------- */
+.cta:focus-visible,
+.brand:focus-visible,
+.nav-links a:focus-visible,
+.foot-col a:focus-visible,
+.scroll-cue:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:3px;
+  border-radius:10px;
+}
+
+/* --------------------------------------------------------------------------
+   Small screens
+   -------------------------------------------------------------------------- */
+@media (max-width:900px){
+  .nav-links{display:none;}
+}
+@media (max-width:560px){
+  .nav-actions .cta-ghost{display:none;}
+  .hero{min-height:0;}
+  .hero-cta .cta{width:100%;}
+  .foot-fine{justify-content:flex-start;}
+}
+
+/* --------------------------------------------------------------------------
+   Dark mode — main.css flips the tokens; these are the landing-only colours.
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme:dark){
+  .nav.is-stuck{background:rgba(26,16,19,.84);}
+  .brand{color:#FFF3E2;}
+  .nav-links a{color:var(--ink);}
+  .hero-title,
+  .section-head h2,
+  .stat-num,
+  .card h3,
+  .step h3,
+  .route-top h3,
+  .quote blockquote{color:#FFF3E2;}
+  .hero-sub,
+  .section-sub,
+  .card p,
+  .step p{color:#C9B6AC;}
+  .foot-col a{color:#C9B6AC;}
+  .hero-lattice{
+    background-image:
+      repeating-linear-gradient(45deg,  rgba(201,162,39,.08) 0 1px, transparent 1px 30px),
+      repeating-linear-gradient(-45deg, rgba(201,162,39,.08) 0 1px, transparent 1px 30px);
+  }
+  .eyebrow{color:var(--gold-soft);}
+  .cta-ghost{
+    color:var(--gold-soft);
+    border-color:rgba(201,162,39,.42);
+  }
+  .cta-ghost:hover{background:rgba(201,162,39,.12);}
+  .quote{
+    background:linear-gradient(160deg,rgba(34,21,24,.94),rgba(26,16,19,.78));
+    border-color:rgba(201,162,39,.28);
+  }
+  .card-icon{color:var(--gold-soft);}
+  .card:hover .card-icon{color:var(--gold);}
+  .step-num{color:var(--gold-soft);}
+  .step:hover .step-num{color:var(--gold);}
+  .quote figcaption{color:var(--gold-soft);}
+}
+
+/* --------------------------------------------------------------------------
+   Motion preferences — main.css neutralises durations globally; these
+   also pin the entrance states so nothing is left mid-animation.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .hero-aura,
+  .hero-lattice,
+  .band-lattice,
+  .marquee-track,
+  .card-feature,
+  .scroll-line::after,
+  .hero-art .ring-outer,
+  .hero-art .ring-mid,
+  .hero-art .needle,
+  .hero-art .sun,
+  .hero-art .wave,
+  .hero-title .shimmer{
+    animation:none !important;
+  }
+  .hero-title .word,
+  .hero-sub,
+  .hero-cta,
+  .hero-trust,
+  .hero-art,
+  .scroll-cue{
+    animation:none !important;
+    opacity:1 !important;
+    translate:0 0 !important;
+    transform:none !important;
+    scale:1 !important;
+    rotate:0deg !important;
+  }
+  .hero-title .shimmer{
+    -webkit-text-fill-color:var(--gold);
+    background:none;
+  }
+  .reveal{
+    opacity:1;
+    translate:0 0;
+    transition:none;
+  }
+  .cta::after{display:none;}
+}

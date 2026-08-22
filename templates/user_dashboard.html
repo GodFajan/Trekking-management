@@ -8,20 +8,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/main.css" />
+    <link rel="stylesheet" href="/static/app_style.css" />
+    <link rel="stylesheet" href="/static/app_layout.css" />
+    <script src="/static/app.js"></script>
     <title>User Dashboard</title>
   </head>
   <body>
     <div class="container">
-      <div><h2 class="center">Tourism Company</h2></div>
+      <div>
+        <h2 class="center">Tourism Company</h2>
+        {% include "_topbar.html" %}
+      </div>
 
       <div class="dashboard-form">
-        <h3 class="center">User Dashboard</h3>
+        <h3 class="center">User Dashboard{% if t_user %} — {{ t_user.name }}{% endif %}</h3>
 
-        <div class="dash-actions">
-          <a href="/all_treks" class="button-link">See All Treks</a>
+        <div class="quick-grid">
+          <a class="quick" href="/all_treks">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="M2 17 L7 8 L10 13 L13 6 L18 17 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+            <h4 class="quick-title">Browse open treks <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">Search every departure taking bookings, then reserve your slot in one click.</p>
+            <p class="quick-metric">Live slot counts</p>
+          </a>
+          <a class="quick" href="#bookings">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><rect x="2.8" y="4.4" width="14.4" height="12.8" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.8 8.4h14.4M6.8 2.8v3M13.2 2.8v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+            <h4 class="quick-title">My bookings <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">The trips you are holding a slot on, with their start dates and when you booked.</p>
+            <p class="quick-metric">Jump to the table</p>
+          </a>
+          <a class="quick" href="#history">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><circle cx="10" cy="10" r="7.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 5.8V10l3.1 1.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            <h4 class="quick-title">Booking history <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">Journeys you have already finished — the record stays here once a trek completes.</p>
+            <p class="quick-metric">Completed treks</p>
+          </a>
         </div>
 
-        <div class="table-wrap">
+        <div class="table-wrap" id="bookings">
           <table class="center" name="My_Bookings" border="1">
             <caption class="center">My Bookings</caption>
             <tr>
@@ -31,21 +54,23 @@
               <th>Booked Date</th>
               <th>Status</th>
             </tr>
-            {% for b,t in my_bookings %}
-              {% if b.status == "Booked"%}
-                <tr>
-                  <td>{{ t.trek_name }}</td>
-                  <td>{{ t.location }}</td>
-                  <td>{{ t.start_date }}</td>
-                  <td>{{ b.booking_date }}</td>
-                  <td><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
-                </tr>
-              {% endif %}
+            {# Filtered with selectattr rather than an inner {% if %} so the
+               {% else %} branch can show a real empty state. #}
+            {% for b, t in my_bookings | selectattr('0.status', 'equalto', 'Booked') %}
+              <tr>
+                <td data-label="Trek Name">{{ t.trek_name }}</td>
+                <td data-label="Location">{{ t.location }}</td>
+                <td data-label="Start Date">{{ t.start_date }}</td>
+                <td data-label="Booked Date">{{ b.booking_date }}</td>
+                <td data-label="Status"><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
+              </tr>
+            {% else %}
+              <tr class="is-empty"><td colspan="5">You have no upcoming bookings — browse the open treks to reserve a slot.</td></tr>
             {% endfor %}
           </table>
         </div>
 
-        <div class="table-wrap">
+        <div class="table-wrap reveal-up" id="history">
           <table class="center" name="Book_His" border="1">
             <caption class="center">Booking History</caption>
             <tr>
@@ -56,21 +81,22 @@
               <th>Booked Date</th>
               <th>Status</th>
             </tr>
-            {% for b,t in my_bookings %}
-              {% if b.status == "Completed" %}
-                <tr>
-                  <td>{{ t.trek_name }}</td>
-                  <td>{{ t.location }}</td>
-                  <td>{{ t.start_date }}</td>
-                  <td>{{ t.end_date }}</td>
-                  <td>{{ b.booking_date }}</td>
-                  <td><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
-                </tr>
-              {% endif %}
+            {% for b, t in my_bookings | selectattr('0.status', 'equalto', 'Completed') %}
+              <tr>
+                <td data-label="Trek Name">{{ t.trek_name }}</td>
+                <td data-label="Location">{{ t.location }}</td>
+                <td data-label="Start Date">{{ t.start_date }}</td>
+                <td data-label="End Date">{{ t.end_date }}</td>
+                <td data-label="Booked Date">{{ b.booking_date }}</td>
+                <td data-label="Status"><span class="pill pill-{{ b.status|lower }}">{{ b.status }}</span></td>
+              </tr>
+            {% else %}
+              <tr class="is-empty"><td colspan="6">No completed treks yet. Your finished journeys will appear here.</td></tr>
             {% endfor %}
           </table>
         </div>
       </div>
+      {% include "_appfoot.html" %}
     </div>
   </body>
 </html>

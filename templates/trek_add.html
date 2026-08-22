@@ -8,11 +8,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/main.css" />
-    <title>Trek Add</title>
+    <link rel="stylesheet" href="/static/app_style.css" />
+    <link rel="stylesheet" href="/static/app_layout.css" />
+    <script src="/static/app.js"></script>
+    <title>Add a Trek</title>
   </head>
   <body>
     <div class="container">
-      <div><h2 class="center">Tourism Company</h2></div>
+      <div>
+        <h2 class="center">Tourism Company</h2>
+        {% include "_topbar.html" %}
+      </div>
 
       <div class="dashboard-form">
         {% if session.pop('err_msg_end_date', None) %}
@@ -23,17 +29,30 @@
           <div class="flash flash-warn">Please provide correct details</div>
         {% endif %}
 
+        {% if session.pop('err_msg_past_date', None) %}
+          <div class="flash flash-warn">A trek can't start in the past — pick today or a later date</div>
+        {% endif %}
+
         <h3 class="center">Add new Treks</h3>
+
+        {% if err_msg %}<div class="flash flash-warn">{{ err_msg }}</div>{% endif %}
+
+        {% if not staffs %}
+          <p class="note">
+            No <strong>active staff</strong> are available to lead a trek yet. Approve a pending
+            staff member on the <strong>People</strong> page first, then come back here.
+          </p>
+        {% endif %}
 
         <form action="/trek_add" method="POST">
           <div class="form-grid">
             <div class="field field-wide">
               <label for="tname">Trek Name</label>
-              <input type="text" name = "tname" id="tname" required/>
+              <input type="text" name="tname" id="tname" placeholder="e.g. Kedarkantha Winter Trail" required/>
             </div>
             <div class="field field-wide">
               <label for="lname">Location</label>
-              <input type="text" name = "lname" id="lname" required/>
+              <input type="text" name="lname" id="lname" placeholder="e.g. Uttarakhand, India" required/>
             </div>
             <div class="field">
               <label for="dfclty">Difficulty</label>
@@ -52,26 +71,36 @@
             </div>
             <div class="field">
               <label for="slots">Available Slots</label>
-              <input type="text" name = "slots" id="slots" required>
+              <input type="number" name="slots" id="slots" min="0" step="1" placeholder="0" required>
             </div>
             <div class="field">
-              <label for="s_id">Assigned Staff id</label>
-              <input type="text" name = "s_id" id="s_id" required>
+              <label for="s_id">Assigned Staff</label>
+              {# Only approved, non-blacklisted staff can be assigned, so the
+                 admin picks a person instead of typing a raw id. #}
+              <select name="s_id" id="s_id" required {% if not staffs %}disabled{% endif %}>
+                <option value="" disabled selected>Choose a staff member…</option>
+                {% for s in staffs %}
+                  <option value="{{ s.user_id }}">{{ s.name }} — #{{ s.user_id }}</option>
+                {% endfor %}
+              </select>
             </div>
             <div class="field">
-              <label for="str_date">Start_date</label>
-              <input type="date" name="str_date" id="str_date" required >
+              <label for="str_date">Start date</label>
+              {# min stops the past being selectable in the picker; the route
+                 re-checks it, since min is only a client-side hint. #}
+              <input type="date" name="str_date" id="str_date" min="{{ today }}" required>
             </div>
             <div class="field">
-              <label for="end_date">End_date</label>
-              <input type="date" name="end_date" id="end_date" required>
+              <label for="end_date">End date</label>
+              <input type="date" name="end_date" id="end_date" min="{{ today }}" required>
             </div>
             <div class="actions">
-              <button name = "Add">Add</button>
+              <button type="submit" name="Add" {% if not staffs %}disabled{% endif %}>Add Trek</button>
             </div>
           </div>
         </form>
       </div>
+      {% include "_appfoot.html" %}
     </div>
   </body>
 </html>

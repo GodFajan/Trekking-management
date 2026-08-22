@@ -22,6 +22,10 @@
   /* surfaces */
   --surface:#FFFFFF;
   --surface-sunk:#FCFAF5;
+  /* table body + hover, opaque so the pinned action column can cover the
+     cells that scroll underneath it */
+  --table-bg:#FFFFFF;
+  --table-bg-hover:#FCFAF5;
   --line:#E7DFD3;
   --line-strong:#D6C9B6;
   --muted:#8A7A72;
@@ -104,7 +108,7 @@ body::after{
 
 /* Dashboard/table pages are a single wide column and start at the top,
    so long tables stay reachable instead of overflowing a centred box. */
-.container:has(.dashboard-form){max-width:1320px;}
+.container:has(.dashboard-form){max-width:1440px;}
 body:has(.dashboard-form){align-items:flex-start;}
 
 /* --------------------------------------------------------------------------
@@ -294,6 +298,7 @@ body:has(.dashboard-form){align-items:flex-start;}
 .field input[type="password"],
 .field input[type="text"],
 .field input[type="date"],
+.field input[type="number"],
 .field select,
 .field textarea{
   width:100%;
@@ -318,6 +323,7 @@ body:has(.dashboard-form){align-items:flex-start;}
 .field input[type="password"]:hover,
 .field input[type="text"]:hover,
 .field input[type="date"]:hover,
+.field input[type="number"]:hover,
 .field select:hover,
 .field textarea:hover{border-color:var(--line-strong);}
 
@@ -325,6 +331,7 @@ body:has(.dashboard-form){align-items:flex-start;}
 .field input[type="password"]:focus-visible,
 .field input[type="text"]:focus-visible,
 .field input[type="date"]:focus-visible,
+.field input[type="number"]:focus-visible,
 .field select:focus-visible,
 .field textarea:focus-visible{
   outline:none;
@@ -354,6 +361,45 @@ body:has(.dashboard-form){align-items:flex-start;}
   background-position:right 14px center;
   background-size:16px;
 }
+
+/* Number + date fields: the native spinner and calendar glyph are the only
+   parts of these controls a browser will not let a border-radius reach, so
+   they get sized and tinted to match the rest of the field. */
+/* The spinner keeps its box at all times and only fades in — toggling
+   appearance instead would reflow the value sideways on hover. */
+.field input[type="number"]::-webkit-inner-spin-button,
+.field input[type="number"]::-webkit-outer-spin-button{
+  height:26px;
+  margin-right:2px;
+  opacity:0;
+  cursor:pointer;
+  transition:opacity .18s var(--ease);
+}
+.field input[type="number"]:hover::-webkit-inner-spin-button,
+.field input[type="number"]:focus::-webkit-inner-spin-button{opacity:.7;}
+
+/* iOS refuses to honour padding/height on a date field until the native
+   appearance is dropped, which is why the height is pinned explicitly. */
+.field input[type="date"]{
+  appearance:none;
+  -webkit-appearance:none;
+  min-height:50px;
+}
+.field input[type="date"]::-webkit-date-and-time-value{text-align:left;}
+.field input[type="date"]::-webkit-calendar-picker-indicator{
+  width:18px;
+  height:18px;
+  padding:3px;
+  border-radius:6px;
+  cursor:pointer;
+  opacity:.55;
+  transition:opacity .18s var(--ease),background-color .18s var(--ease);
+}
+.field input[type="date"]::-webkit-calendar-picker-indicator:hover{
+  opacity:1;
+  background:rgba(201,162,39,.2);
+}
+.table-wrap input[type="number"]::-webkit-inner-spin-button{opacity:.55;}
 
 /* --------------------------------------------------------------------------
    Actions
@@ -436,6 +482,20 @@ input[type="Submit"]:active{transform:translateY(1px);}
   font-weight:500;
 }
 .form-error:empty{display:none;}
+
+/* Bare <h3> message slots (err_msg_pending / err_msg_blocked) collapse when
+   the view passes nothing, instead of leaving a gap above the heading. */
+.input-form > h3:empty{display:none;}
+.input-form > h3:not(:empty){
+  margin:0;
+  padding:11px 14px 11px 16px;
+  border-radius:12px;
+  border-left:3px solid var(--gold);
+  background:rgba(201,162,39,.1);
+  color:var(--maroon-dark);
+  font-size:.86rem;
+  font-weight:500;
+}
 
 /* ==========================================================================
    DASHBOARD & TABLE PAGES
@@ -560,7 +620,7 @@ input[type="Submit"]:active{transform:translateY(1px);}
   overflow-x:auto;
   border:1px solid var(--line);
   border-radius:18px;
-  background:var(--surface);
+  background:var(--table-bg);
   box-shadow:
     0 1px 2px rgba(44,14,25,.04),
     0 14px 26px -20px rgba(44,14,25,.3);
@@ -575,11 +635,13 @@ input[type="Submit"]:active{transform:translateY(1px);}
   background-color:var(--line-strong);
 }
 
+/* border-collapse:separate (with zero spacing, so it looks identical) is what
+   lets the action column below use position:sticky. */
 .table-wrap table{
   width:100%;
   min-width:max-content;
   border:none;
-  border-collapse:collapse;
+  border-collapse:separate;
   border-spacing:0;
   font-size:.88rem;
 }
@@ -611,20 +673,20 @@ input[type="Submit"]:active{transform:translateY(1px);}
 .table-wrap th{
   border:none;
   border-bottom:1px solid var(--line);
-  padding:14px 18px;
+  padding:14px 14px;
   text-align:left;
   white-space:nowrap;
   background:linear-gradient(180deg,rgba(110,30,43,.075),rgba(110,30,43,.035));
   font-size:.69rem;
   font-weight:600;
   text-transform:uppercase;
-  letter-spacing:.13em;
+  letter-spacing:.08em;
   color:var(--maroon);
 }
 .table-wrap td{
   border:none;
   border-bottom:1px solid rgba(231,223,211,.75);
-  padding:13px 18px;
+  padding:13px 14px;
   vertical-align:middle;
   color:var(--ink);
 }
@@ -635,8 +697,27 @@ input[type="Submit"]:active{transform:translateY(1px);}
   color:var(--muted);
 }
 
+/* Wide tables (the 11-column trek list) are wider than the card even on a
+   large screen, so the trailing Edit/Delete column used to sit off the right
+   edge until you scrolled. Pin it instead — only for tables whose last column
+   actually holds an action, so plain data tables keep a flush last column. */
+.table-wrap table:has(td:last-child :is(button,a.button-link)) :is(th,td):last-child{
+  position:sticky;
+  right:0;
+  z-index:1;
+  border-left:1px solid var(--line);
+  background-color:var(--table-bg);
+}
+.table-wrap table:has(td:last-child :is(button,a.button-link)) th:last-child{
+  background-image:linear-gradient(180deg,rgba(110,30,43,.075),rgba(110,30,43,.035));
+}
+.table-wrap table:has(td:last-child :is(button,a.button-link)) tr:hover td:last-child{
+  background-color:var(--table-bg-hover);
+}
+
 /* Inline editable cells (staff trek management). */
 .table-wrap input[type="text"],
+.table-wrap input[type="number"],
 .table-wrap select{
   width:100%;
   min-width:96px;
@@ -658,7 +739,9 @@ input[type="Submit"]:active{transform:translateY(1px);}
   background-position:right 10px center;
   background-size:15px;
 }
+.table-wrap input[type="number"]{min-width:80px;}
 .table-wrap input[type="text"]:focus-visible,
+.table-wrap input[type="number"]:focus-visible,
 .table-wrap select:focus-visible{
   outline:none;
   border-color:var(--gold);
@@ -907,16 +990,21 @@ input[type="button"]:hover{
 
 /* --------------------------------------------------------------------------
    Search row — the div.center holding a text field and a Search button.
+   Keyed off value="Search" rather than the input's type, so it works whether
+   the button is a submit inside a <form> or a bare input[type=button].
    The literal "|" separator in the markup is toned down to a hairline.
    -------------------------------------------------------------------------- */
-.dashboard-form div.center:has(input[type="button"]){
+.dashboard-form div.center:has(input[value="Search"]),
+.dashboard-form div.center:has(input[value="Search"]) form{
   display:flex;
   flex-wrap:wrap;
   align-items:center;
+  justify-content:center;
   gap:12px;
   color:var(--line-strong);
 }
-.dashboard-form div.center:has(input[type="button"]) input[type="text"]{
+.dashboard-form div.center:has(input[value="Search"]) form{width:100%;}
+.dashboard-form div.center:has(input[value="Search"]) input[type="text"]{
   flex:1 1 240px;
   max-width:340px;
   padding:11px 15px;
@@ -928,11 +1016,25 @@ input[type="button"]:hover{
   font-size:.88rem;
   transition:border-color .18s var(--ease),box-shadow .18s var(--ease);
 }
-.dashboard-form div.center:has(input[type="button"]) input[type="text"]:focus-visible{
+.dashboard-form div.center:has(input[value="Search"]) input[type="text"]:focus-visible{
   outline:none;
   border-color:var(--gold);
   box-shadow:var(--ring);
   background:var(--surface);
+}
+/* Beat the full-width input[type="Submit"] rule used by the login/register
+   panels — the search button is a compact pill, not a bar. */
+.dashboard-form div.center:has(input[value="Search"]) input[type="submit"]{
+  width:auto;
+  flex:0 0 auto;
+  padding:9px 19px;
+  border-radius:999px;
+  font-size:.81rem;
+  letter-spacing:.03em;
+  white-space:nowrap;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    0 8px 18px -10px rgba(74,20,32,.55);
 }
 
 /* --------------------------------------------------------------------------
@@ -957,6 +1059,8 @@ input[type="button"]:hover{
   :root{
     --surface:#1A1013;
     --surface-sunk:#221518;
+    --table-bg:#1E1216;
+    --table-bg-hover:#2A1C17;
     --line:#3A282C;
     --line-strong:#54393F;
     --ink:#F2E7DC;
@@ -983,11 +1087,15 @@ input[type="button"]:hover{
   /* dashboards */
   .container > div > h2.center{color:#FFF3E2;}
   .dashboard-form h3{color:#FFEAD2;}
-  .table-wrap{background:#1E1216;border-color:var(--line);}
+  .table-wrap{background:var(--table-bg);border-color:var(--line);}
   .table-wrap th{
     background:linear-gradient(180deg,rgba(201,162,39,.13),rgba(201,162,39,.05));
     color:var(--gold-soft);
     border-bottom-color:var(--line);
+  }
+  /* keep the pinned action column's gradient in the dark palette */
+  .table-wrap table:has(td:last-child :is(button,a.button-link)) th:last-child{
+    background-image:linear-gradient(180deg,rgba(201,162,39,.13),rgba(201,162,39,.05));
   }
   .table-wrap td{border-bottom-color:rgba(58,40,44,.85);}
   .table-wrap tr:hover td{background:rgba(201,162,39,.07);}
@@ -1048,6 +1156,7 @@ input[type="button"]:hover{
   .field input[type="email"],
   .field input[type="password"],
   .field input[type="text"],
+  .field input[type="number"],
   .field select,
   .field textarea{border-color:var(--ink);}
   .art-sub{color:#F7EEDD;}

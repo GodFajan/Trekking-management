@@ -8,18 +8,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/main.css" />
+    <link rel="stylesheet" href="/static/app_style.css" />
+    <link rel="stylesheet" href="/static/app_layout.css" />
+    <script src="/static/app.js"></script>
     <title>Admin Dashboard</title>
   </head>
   <body>
     <div class="container">
-      <div><h2 class="center">Tourism Company</h2></div>
+      <div>
+        <h2 class="center">Tourism Company</h2>
+        {% include "_topbar.html" %}
+      </div>
 
       <div class="dashboard-form">
         {% if session.pop('added_trek', None) %}
           <div class="flash">Trek added successfully</div>
         {% endif %}
         {% if session.pop('edited_trek', None) %}
-          <div class="flash">Trek edited successfully</div>
+          <div class="flash">Trek updated successfully</div>
         {% endif %}
         {% if session.pop('del_suc', None) %}
           <div class="flash">Trek deleted successfully</div>
@@ -27,8 +33,15 @@
 
         <h3 class="center">Admin Dashboard</h3>
 
+        {% if pending_staffs %}
+          <p class="note">
+            <strong>{{ pending_staffs }}</strong> staff account{{ 's' if pending_staffs != 1 else '' }}
+            waiting for approval on the <strong>People</strong> page.
+          </p>
+        {% endif %}
+
         <div class="stat-wrap">
-          <table class = "center" name = "Dashboard" border = "1">
+          <table class="center" name="Dashboard" border="1">
             <caption class="center">Dashboard</caption>
             <tr>
               <th>Total Treks</th>
@@ -37,20 +50,36 @@
               <th>Total Booking</th>
             </tr>
             <tr>
-              <td>{{ t_treks }}</td>
-              <td>{{ t_users }}</td>
-              <td>{{ t_staffs }}</td>
-              <td>{{ t_bookings }}</td>
+              <td>{{ total_treks }}</td>
+              <td>{{ total_users }}</td>
+              <td>{{ total_staffs }}</td>
+              <td>{{ total_booking }}</td>
             </tr>
           </table>
         </div>
 
-        <div class="dash-actions">
-          <a href="/all_treks" class="button-link">See All Treks</a>
-          <a href="/trek_add" class="button-link">Add new Trek</a>
-          <a href="/all_staffs_users" class="button-link">All Staffs and Users</a>
+        <div class="quick-grid">
+          <a class="quick" href="/all_treks">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="M2 17 L7 8 L10 13 L13 6 L18 17 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+            <h4 class="quick-title">All treks <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">Every departure in one list — search it, retime it, change the slots, or take it down.</p>
+            <p class="quick-metric">{{ total_treks }} on the books</p>
+          </a>
+          <a class="quick" href="/trek_add">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><circle cx="10" cy="10" r="7.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 6.4v7.2M6.4 10h7.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            <h4 class="quick-title">Add a trek <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">Open a new departure: grade the route, set the window, assign a guide.</p>
+            <p class="quick-metric">Guides are picked from approved staff</p>
+          </a>
+          <a class="quick" href="/all_staffs_users">
+            <span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><circle cx="7.4" cy="7.6" r="2.9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.6 16.6c0-2.7 2.1-4.5 4.8-4.5s4.8 1.8 4.8 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.6 5.2a2.7 2.7 0 0 1 0 5.1M14.6 12.4c1.7.5 2.9 1.9 2.9 4.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+            <h4 class="quick-title">Staff &amp; users <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+            <p class="quick-note">Approve the guides waiting to join, and blacklist an account when you need to.</p>
+            <p class="quick-metric">{% if pending_staffs %}{{ pending_staffs }} waiting on you{% else %}Nothing pending{% endif %}</p>
+          </a>
         </div>
       </div>
+      {% include "_appfoot.html" %}
     </div>
   </body>
 </html>

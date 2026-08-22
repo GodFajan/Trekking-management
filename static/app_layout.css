@@ -1,0 +1,363 @@
+/* ==========================================================================
+   app_layout.css — page shell, footer, action cards and the narrow-screen
+   table treatment for the signed-in pages.
+   Loaded after app_style.css (chrome + motion), which is loaded after
+   main.css (the shared design system).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Full-height shell — a thin page (a dashboard with one small table) used to
+   leave a dead band under the card because the shell was top-aligned. The
+   card now spans the viewport and the footer takes the last row, so the
+   bottom edge is always filled.
+   -------------------------------------------------------------------------- */
+body:has(.dashboard-form){align-items:stretch;}
+.container:has(.dashboard-form){
+  grid-template-rows:auto 1fr auto;
+  /* vh first so a browser without dvh still gets a full-height shell. */
+  min-height:calc(100vh - 2 * clamp(16px,3vw,40px));
+  min-height:calc(100dvh - 2 * clamp(16px,3vw,40px));
+}
+
+/* --------------------------------------------------------------------------
+   App footer — bookends the maroon header band, and its link columns double
+   as the full site map for whichever role is signed in.
+   -------------------------------------------------------------------------- */
+.appfoot{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  margin-top:clamp(20px,3vw,34px);
+  padding:clamp(26px,3vw,40px) clamp(22px,3vw,44px) clamp(18px,2vw,24px);
+  border-top:1px solid rgba(201,162,39,.34);
+  background:linear-gradient(150deg,var(--maroon-dark) 0%,var(--maroon) 46%,var(--plum) 100%);
+  color:rgba(234,223,200,.82);
+  font-size:.83rem;
+}
+.appfoot::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  z-index:-1;
+  pointer-events:none;
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(201,162,39,.14) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(-45deg, rgba(201,162,39,.14) 0 1px, transparent 1px 24px),
+    radial-gradient(circle, rgba(234,223,200,.16) 0 1.3px, transparent 2px);
+  background-size:auto,auto,48px 48px;
+  mask-image:linear-gradient(260deg,#000 0%,rgba(0,0,0,.32) 58%,transparent 100%);
+}
+
+.appfoot-grid{
+  display:grid;
+  gap:clamp(22px,3vw,38px);
+  grid-template-columns:1fr;
+}
+@media (min-width:620px){
+  .appfoot-grid{grid-template-columns:1fr 1fr;}
+}
+@media (min-width:980px){
+  .appfoot-grid{grid-template-columns:1.5fr 1fr 1fr 1.2fr;}
+}
+
+.appfoot-mark{display:block;color:var(--gold-pale);}
+.appfoot-mark svg{width:34px;height:34px;display:block;}
+.appfoot-mark svg circle:nth-of-type(2){
+  transform-origin:22px 22px;
+  animation:mark-spin 26s linear infinite;
+}
+.appfoot-name{
+  margin:11px 0 7px;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.25rem;
+  font-weight:600;
+  color:#FFF8EA;
+}
+.appfoot-line{
+  margin:0;
+  max-width:34ch;
+  font-size:.82rem;
+  font-weight:300;
+  line-height:1.7;
+  color:rgba(234,223,200,.72);
+}
+
+.appfoot-col{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:9px;
+}
+.appfoot-col h4{
+  margin:0 0 3px;
+  font-size:.64rem;
+  font-weight:600;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold-soft);
+}
+.appfoot-col a{
+  position:relative;
+  color:rgba(234,223,200,.82);
+  font-size:.83rem;
+  text-decoration:none;
+  transition:color .18s var(--ease),padding-left .22s var(--ease);
+}
+.appfoot-col a::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:50%;
+  width:0;
+  height:1px;
+  background:var(--gold);
+  transition:width .22s var(--ease);
+}
+.appfoot-col a:hover{color:#FFF8EA;padding-left:15px;}
+.appfoot-col a:hover::before{width:10px;}
+.appfoot-col a:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:3px;
+  border-radius:4px;
+}
+.appfoot-static{font-size:.83rem;color:rgba(234,223,200,.6);}
+.appfoot-dest{
+  margin:0;
+  font-size:.81rem;
+  font-weight:300;
+  line-height:1.85;
+  color:rgba(234,223,200,.68);
+}
+
+.appfoot-fine{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 20px;
+  justify-content:space-between;
+  margin-top:clamp(22px,3vw,34px);
+  padding-top:15px;
+  border-top:1px solid rgba(234,223,200,.18);
+  font-size:.72rem;
+  letter-spacing:.05em;
+  color:rgba(234,223,200,.55);
+}
+
+/* --------------------------------------------------------------------------
+   Quick-action cards — every page a role can reach, described rather than
+   just listed, so a thin dashboard reads as a full page.
+   -------------------------------------------------------------------------- */
+.quick-grid{
+  display:grid;
+  gap:14px;
+  grid-template-columns:1fr;
+}
+@media (min-width:620px){
+  .quick-grid{grid-template-columns:1fr 1fr;}
+}
+@media (min-width:1000px){
+  .quick-grid{grid-template-columns:repeat(3,1fr);}
+  /* Four cards read better as a 2x2 block than 3-then-1. */
+  .quick-grid:has(> :nth-child(4):last-child){grid-template-columns:repeat(2,1fr);}
+}
+
+.quick{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  padding:20px 20px 18px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:linear-gradient(180deg,var(--surface) 0%,var(--surface-sunk) 100%);
+  color:inherit;
+  text-decoration:none;
+  box-shadow:0 1px 2px rgba(44,14,25,.04);
+  transition:
+    transform .26s var(--ease),
+    border-color .22s var(--ease),
+    box-shadow .26s var(--ease);
+}
+.quick::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(320px 180px at var(--mx,50%) 0%,rgba(201,162,39,.18),transparent 70%);
+  transition:opacity .3s var(--ease);
+}
+.quick:hover{
+  transform:translateY(-4px);
+  border-color:rgba(201,162,39,.55);
+  box-shadow:0 20px 38px -24px rgba(74,20,32,.5);
+}
+.quick:hover::after{opacity:1;}
+.quick:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+
+.quick-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  border:1px solid rgba(201,162,39,.4);
+  border-radius:13px;
+  background:rgba(201,162,39,.1);
+  color:var(--maroon);
+  transition:transform .3s var(--ease);
+}
+.quick-icon svg{width:20px;height:20px;}
+.quick:hover .quick-icon{transform:rotate(-7deg) scale(1.08);}
+
+.quick-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.2rem;
+  font-weight:600;
+  color:var(--maroon-dark);
+}
+.quick-title svg{
+  width:16px;
+  height:16px;
+  flex:none;
+  transition:transform .26s var(--ease);
+}
+.quick:hover .quick-title svg{transform:translateX(4px);}
+
+.quick-note{
+  margin:0;
+  font-size:.83rem;
+  line-height:1.62;
+  color:var(--muted);
+}
+.quick-metric{
+  margin-top:auto;
+  padding-top:11px;
+  border-top:1px dashed var(--line-strong);
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--maroon);
+}
+
+/* --------------------------------------------------------------------------
+   Narrow screens — tables stop being tables.
+   Each row becomes its own card and every cell carries its own column name
+   from data-label, so nothing has to be dragged sideways.
+   -------------------------------------------------------------------------- */
+@media (max-width:760px){
+  .table-wrap{
+    overflow-x:visible;
+    border:none;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+  }
+  .table-wrap table{display:block;min-width:0;width:100%;}
+  .table-wrap caption{
+    display:block;
+    padding:0 2px 12px;
+    border-bottom:none;
+    background:none;
+    font-size:1.12rem;
+  }
+  .table-wrap tbody{display:block;}
+  /* The header row holds the column names, which each cell now carries. */
+  .table-wrap tr:first-child{display:none;}
+  .table-wrap tr{
+    display:block;
+    margin-bottom:12px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:var(--table-bg);
+    overflow:hidden;
+    box-shadow:
+      0 1px 2px rgba(44,14,25,.04),
+      0 12px 22px -18px rgba(44,14,25,.3);
+  }
+  .table-wrap tr:last-child{margin-bottom:0;}
+  .table-wrap td{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:11px 15px;
+    border-bottom:1px solid rgba(231,223,211,.7);
+    text-align:right;
+  }
+  .table-wrap td:last-child{border-bottom:none;}
+  .table-wrap td[data-label]::before{
+    content:attr(data-label);
+    flex:none;
+    text-align:left;
+    font-size:.65rem;
+    font-weight:600;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--maroon);
+  }
+  /* The sticky action column only makes sense while the table scrolls. */
+  .table-wrap table:has(td:last-child :is(button,a.button-link)) :is(th,td):last-child{
+    position:static;
+    border-left:none;
+  }
+  .table-wrap tr:hover:not(:first-child):not(.is-empty){box-shadow:0 0 0 1px var(--gold);}
+  .table-wrap tr.is-empty td{justify-content:center;text-align:center;}
+  .table-wrap input[type="text"],
+  .table-wrap input[type="number"],
+  .table-wrap select{min-width:0;max-width:190px;}
+
+  /* KPI tiles: let the captions wrap so all four fit without a sideways drag. */
+  table[name="Dashboard"]{min-width:0;border-spacing:8px 0;}
+  table[name="Dashboard"] th{
+    white-space:normal;
+    padding:11px 9px 3px;
+    font-size:.58rem;
+    letter-spacing:.09em;
+  }
+  table[name="Dashboard"] td{
+    padding:0 9px 13px;
+    font-size:clamp(1.35rem,6.5vw,1.9rem);
+  }
+
+  .dash-actions{flex-direction:column;align-items:stretch;}
+  .dash-actions > *{width:100%;}
+  .dash-actions form{display:flex;}
+  .dash-actions form > button{width:100%;}
+}
+
+/* Very narrow phones — drop the last of the horizontal pressure. */
+@media (max-width:400px){
+  .appfoot-fine{justify-content:flex-start;}
+  .quick{padding:17px 16px 15px;}
+  table[name="Dashboard"] th{font-size:.54rem;}
+}
+
+@media (prefers-color-scheme:dark){
+  .quick{
+    border-color:rgba(201,162,39,.24);
+    background:linear-gradient(180deg,rgba(255,248,234,.05) 0%,rgba(255,248,234,.02) 100%);
+  }
+  .quick-title{color:#FFEAD2;}
+  .quick-icon,
+  .quick-metric{color:var(--gold-soft);}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .appfoot-mark svg circle:nth-of-type(2){animation:none;}
+  .quick,
+  .quick-icon,
+  .quick-title svg,
+  .appfoot-col a{transition:none;}
+  .quick:hover,
+  .quick:hover .quick-icon,
+  .quick:hover .quick-title svg{transform:none;}
+  .appfoot-col a:hover{padding-left:0;}
+}

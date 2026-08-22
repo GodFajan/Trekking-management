@@ -8,32 +8,32 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/main.css" />
-    <title>Trek Edit</title>
+    <link rel="stylesheet" href="/static/app_style.css" />
+    <link rel="stylesheet" href="/static/app_layout.css" />
+    <script src="/static/app.js"></script>
+    <title>Edit Trek</title>
   </head>
   <body>
     <div class="container">
-      <div><h2 class="center">Tourism Company</h2></div>
+      <div>
+        <h2 class="center">Tourism Company</h2>
+        {% include "_topbar.html" %}
+      </div>
 
       <div class="dashboard-form">
-        {% if session.pop('err_msg_end_date', None) %}
-          <div class="flash flash-warn">Please provide a correct end date</div>
-        {% endif %}
+        <h3 class="center">Edit Trek — {{ t.trek_name }}</h3>
 
-        {% if session.pop('err_msg_value_error', None) %}
-          <div class="flash flash-warn">Please provide correct details</div>
-        {% endif %}
+        {% if err_msg %}<div class="flash flash-warn">{{ err_msg }}</div>{% endif %}
 
-        <h3 class="center">Edit Treks</h3>
-
-        <form action= "/edit_trek/{{ t.trek_id }}" method = "POST">
+        <form action="/edit_trek/{{ t.trek_id }}" method="POST">
           <div class="form-grid">
             <div class="field field-wide">
               <label for="tname">Trek Name</label>
-              <input type="text" name = "tname" id="tname" value="{{ t.trek_name }}"/>
+              <input type="text" name="tname" id="tname" value="{{ t.trek_name }}" required/>
             </div>
             <div class="field field-wide">
               <label for="lname">Location</label>
-              <input type="text" name = "lname" id="lname" value="{{ t.location }}"/>
+              <input type="text" name="lname" id="lname" value="{{ t.location }}" required/>
             </div>
             <div class="field">
               <label for="dfclty">Difficulty</label>
@@ -45,33 +45,47 @@
             </div>
             <div class="field">
               <label for="stype">Status</label>
+              {# "Completed" is listed so editing a finished trek can't silently
+                 reopen it — with only Open/Closed, neither matched and the
+                 browser fell back to showing (and submitting) Open. #}
               <select name="stype" id="stype">
                 <option value="Open" {% if t.status == "Open" %}selected{% endif %}>Open</option>
                 <option value="Closed" {% if t.status == "Closed" %}selected{% endif %}>Closed</option>
+                <option value="Completed" {% if t.status == "Completed" %}selected{% endif %}>Completed</option>
               </select>
             </div>
             <div class="field">
               <label for="slots">Available Slots</label>
-              <input type="text" name = "slots" id="slots" value="{{ t.avalaible_slots }}">
+              <input type="number" name="slots" id="slots" min="0" step="1" value="{{ t.available_slots }}" required>
             </div>
             <div class="field">
-              <label for="s_id">Assigned Staff id</label>
-              <input type="text" name = "s_id" id="s_id" value="{{ t.ass_staff_id }}">
+              <label for="s_id">Assigned Staff</label>
+              <select name="s_id" id="s_id" required>
+                {% for s in staffs %}
+                  <option value="{{ s.user_id }}" {% if s.user_id == t.ass_staff_id %}selected{% endif %}>
+                    {{ s.name }} — #{{ s.user_id }}{% if s.status != "Active" %} (currently {{ s.status|lower }}){% endif %}
+                  </option>
+                {% endfor %}
+              </select>
             </div>
             <div class="field">
-              <label for="str_date">Start_date</label>
-              <input type="date" name="str_date" id="str_date" value = "{{ t.start_date }}">
+              <label for="str_date">Start date</label>
+              {# The floor is today for an upcoming trek, or the trek's own
+                 start date if it already began — so an old trek stays
+                 editable instead of being locked out by the rule. #}
+              <input type="date" name="str_date" id="str_date" value="{{ t.start_date }}" min="{{ today }}" required>
             </div>
             <div class="field">
-              <label for="end_date">End_date</label>
-              <input type="date" name="end_date" id="end_date" value = "{{ t.end_date }}">
+              <label for="end_date">End date</label>
+              <input type="date" name="end_date" id="end_date" value="{{ t.end_date }}" min="{{ today }}" required>
             </div>
             <div class="actions">
-              <button type = "submit" name = "Edit" class="button-link">Edit</button>
+              <button type="submit" name="Edit">Save changes</button>
             </div>
           </div>
         </form>
       </div>
+      {% include "_appfoot.html" %}
     </div>
   </body>
 </html>

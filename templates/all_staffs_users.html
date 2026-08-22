@@ -8,82 +8,40 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/main.css" />
-    <title>Active and Blocked User and Staff</title>
+    <link rel="stylesheet" href="/static/app_style.css" />
+    <link rel="stylesheet" href="/static/app_layout.css" />
+    <script src="/static/app.js"></script>
+    <title>Staffs and Users</title>
   </head>
   <body>
     <div class="container">
-      <div><h2 class="center">Tourism Company</h2></div>
+      <div>
+        <h2 class="center">Tourism Company</h2>
+        {% include "_topbar.html" %}
+      </div>
 
       <div class="dashboard-form">
-        {% if session.pop('blk_suc', None) %}
-          <div class="flash">User/Staff blacklisted successfully</div>
+        {% if session.pop('app_suc', None) %}
+          <div class="flash">Staff member approved - they can sign in now</div>
         {% endif %}
-        {% if session.pop('act_suc', None) %}
-          <div class="flash">Staff activated successfully</div>
+        {% if session.pop('blk_suc', None) %}
+          <div class="flash">Account blacklisted</div>
         {% endif %}
         {% if session.pop('rej_suc', None) %}
-          <div class="flash">Staff rejected successfully</div>
+          <div class="flash">Account rejected and removed</div>
         {% endif %}
 
         <h3 class="center">Staffs and Users</h3>
 
         <div class="center">
-          <input type="text" name="search_u_and_s" /> |
-          <input type="button" value="Search" />
+          <form action="/all_staffs_users" method="GET">
+            <input type="text" name="searchuser" value="{{ search_word }}" placeholder="Search Users/Staffs..." /> |
+            <input type="submit" value="Search" />
+          </form>
         </div>
 
         <div class="table-wrap">
-          <table class="center" name = "Active_staffs_users" border="1">
-            <caption class="center">Active Staffs and Users</caption>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Role</th>
-              <th>Phone Number</th>
-              <th>Action</th>
-            </tr>
-            {% for u in all_u %}
-              {% if u.status == "Active" and u.role != "Admin" %}
-                <tr>
-                  <td>{{ u.user_id }}</td>
-                  <td>{{ u.name }}</td>
-                  <td><span class="pill pill-{{ u.role|lower }}">{{ u.role }}</span></td>
-                  <td>{{ u.phone }}</td>
-                  <td>
-                    <form action="/blacklist/{{ u.user_id }}" method="POST" style="display:inline;">
-                      <button type="submit" class="button-link">Blacklist</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endif %}
-            {% endfor %}
-          </table>
-        </div>
-
-        <div class="table-wrap">
-          <table class="center" name = "blk_staffs_users" border="1">
-            <caption class="center">Blocked Staffs and Users</caption>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Role</th>
-              <th>Phone Number</th>
-            </tr>
-            {% for u in all_u %}
-              {% if u.status == "Blacklisted" and u.role != "Admin" %}
-                <tr>
-                  <td>{{ u.user_id }}</td>
-                  <td>{{ u.name }}</td>
-                  <td><span class="pill pill-{{ u.role|lower }}">{{ u.role }}</span></td>
-                  <td>{{ u.phone }}</td>
-                </tr>
-              {% endif %}
-            {% endfor %}
-          </table>
-        </div>
-
-        <div class="table-wrap">
-          <table class="center" name = "pend_staffs" border="1">
+          <table class="center" name="pend_staffs" border="1">
             <caption class="center">Pending Staffs</caption>
             <tr>
               <th>ID</th>
@@ -93,29 +51,80 @@
               <th>Approve</th>
               <th>Reject</th>
             </tr>
-            {% for u in all_u %}
-              {% if u.status == "Pending" %}
-                <tr>
-                  <td>{{ u.user_id }}</td>
-                  <td>{{ u.name }}</td>
-                  <td><span class="pill pill-{{ u.role|lower }}">{{ u.role }}</span></td>
-                  <td>{{ u.phone }}</td>
-                  <td>
-                    <form action="/approve/{{ u.user_id }}" method="POST" style="display:inline;">
-                      <button type="submit" class="button-link">Approve</button>
-                    </form>
-                  </td>
-                  <td>
-                    <form action="/reject/{{ u.user_id }}" method="POST" style="display:inline;">
-                      <button type="submit" class="button-link">Reject</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endif %}
+            {% for u in pending_u %}
+              <tr>
+                <td data-label="ID">{{ u.user_id }}</td>
+                <td data-label="Name">{{ u.name }}</td>
+                <td data-label="Role"><span class="pill pill-{{ u.role|lower }}">{{ u.role }}</span></td>
+                <td data-label="Phone Number">{{ u.phone }}</td>
+                <td data-label="Approve">
+                  <form action="/approve/{{ u.user_id }}" method="POST" style="display:inline;">
+                    <button type="submit" class="button-link">Approve</button>
+                  </form>
+                </td>
+                <td data-label="Reject">
+                  <form action="/reject/{{ u.user_id }}" method="POST" style="display:inline;">
+                    <button type="submit" class="button-link">Reject</button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr class="is-empty"><td colspan="6">No staff accounts are waiting for approval.</td></tr>
+            {% endfor %}
+          </table>
+        </div>
+
+        <div class="table-wrap reveal-up">
+          <table class="center" name="Active_staffs_users" border="1">
+            <caption class="center">Active Staffs and Users</caption>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Phone Number</th>
+              <th>Action</th>
+            </tr>
+            {% for u in active_u %}
+              <tr>
+                <td data-label="ID">{{ u.user_id }}</td>
+                <td data-label="Name">{{ u.name }}</td>
+                <td data-label="Role"><span class="pill pill-{{ u.role|lower }}">{{ u.role }}</span></td>
+                <td data-label="Phone Number">{{ u.phone }}</td>
+                <td data-label="Action">
+                  <form action="/blacklist/{{ u.user_id }}" method="POST" style="display:inline;">
+                    <button type="submit" class="button-link">Blacklist</button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr class="is-empty"><td colspan="5">No active staffs or users found.</td></tr>
+            {% endfor %}
+          </table>
+        </div>
+
+        <div class="table-wrap reveal-up">
+          <table class="center" name="blk_staffs_users" border="1">
+            <caption class="center">Blocked Staffs and Users</caption>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Phone Number</th>
+            </tr>
+            {% for u in blocked_u %}
+              <tr>
+                <td data-label="ID">{{ u.user_id }}</td>
+                <td data-label="Name">{{ u.name }}</td>
+                <td data-label="Role"><span class="pill pill-{{ u.role|lower }}">{{ u.role }}</span></td>
+                <td data-label="Phone Number">{{ u.phone }}</td>
+              </tr>
+            {% else %}
+              <tr class="is-empty"><td colspan="4">No blocked staffs or users found.</td></tr>
             {% endfor %}
           </table>
         </div>
       </div>
+      {% include "_appfoot.html" %}
     </div>
   </body>
 </html>
