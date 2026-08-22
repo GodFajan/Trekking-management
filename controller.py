@@ -1,9 +1,30 @@
 from flask import Blueprint, render_template, request, redirect, session
 from models import *
 from sqlalchemy import or_, cast, String
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
 
 admin_routes = Blueprint('admin_routes', __name__)
+
+
+def verify_password(u, raw):
+    """True if `raw` is the password for user `u`.
+
+    Rows created before passwords were hashed hold the plain text, so a failed
+    hash check falls back to a direct comparison and upgrades the row in place.
+    Once every row has been touched this branch stops being reachable.
+    """
+    try:
+        if check_password_hash(u.password, raw):
+            return True
+    except (ValueError, TypeError):
+        pass                      # not a hash at all - fall through
+    if u.password == raw:
+        u.password = generate_password_hash(raw)
+        db.session.commit()
+        return True
+    return False
+
 
 # Roles a visitor is allowed to self-register as. Anything else is rejected so
 # a hand-crafted POST can't hand itself an Admin account.
@@ -47,8 +68,8 @@ def signin():
     if request.method == "POST":
         user_email = request.form.get("emailid")
         user_password = request.form.get("pwd")
-        tem_user = db.session.query(user).filter(user.email == user_email, user.password == user_password ).first()
-        if tem_user:
+        tem_user = db.session.query(user).filter(user.email == user_email).first()
+        if tem_user and user_password and verify_password(tem_user, user_password):
             if tem_user.role == "Staff" and tem_user.status == "Pending":
                 return render_template("login.html", err_msg_pending = "Your staff account is still waiting on admin approval.")
             if tem_user.status == "Blacklisted":
@@ -85,7 +106,7 @@ def signup():
         if tem_user:
             return render_template("register.html", err_msg = "That email is already registered - try signing in instead.")
         else:
-            user_cred = user(email = user_email, password = password, name = user_name, role = user_type, address = user_address, phone = user_phone, status = user_status)
+            user_cred = user(email = user_email, password = generate_password_hash(password), name = user_name, role = user_type, address = user_address, phone = user_phone, status = user_status)
             db.session.add(user_cred)
             db.session.commit()
             session['reg_suc'] = True

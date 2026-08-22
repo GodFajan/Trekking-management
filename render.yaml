@@ -1,0 +1,41 @@
+# Render blueprint — https://render.com/docs/blueprint-spec
+#
+# In the Render dashboard: New > Blueprint > pick this repo. It reads this
+# file and creates both the web service and the database, wired together.
+#
+# The service name below is what your public URL becomes:
+#     https://trekking-company.onrender.com
+# If that name is taken, change it here and redeploy.
+
+services:
+  - type: web
+    name: trekking-company
+    runtime: python
+    plan: free
+    region: singapore          # closest free region to South Asia
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --workers 2 --threads 4 --timeout 60
+    healthCheckPath: /
+    envVars:
+      # Generated once by Render and kept thereafter, so sessions survive
+      # a redeploy instead of logging everybody out.
+      - key: SECRET_KEY
+        generateValue: true
+      # Tells the app it is behind TLS, which switches on Secure cookies.
+      - key: HTTPS
+        value: "on"
+      - key: PYTHON_VERSION
+        value: "3.13.1"
+      # Pulled from the database below. Without this the app falls back to
+      # SQLite on Render's ephemeral disk, which is wiped on every deploy.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: trekking-db
+          property: connectionString
+
+databases:
+  - name: trekking-db
+    plan: free
+    region: singapore
+    databaseName: trekking
+    user: trekking

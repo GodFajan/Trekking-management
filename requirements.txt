@@ -1,0 +1,14 @@
+# Pinned to what the project is developed against, so the host builds the
+# same versions you tested on.
+Flask==3.1.3
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy==2.0.51
+Werkzeug==3.1.8
+
+# Production WSGI server. `python app.py` is the dev server and must not
+# serve public traffic.
+gunicorn==23.0.0
+
+# PostgreSQL driver. Unused when DATABASE_URL points at SQLite, but free
+# hosts wipe their disk on every deploy, so anything permanent needs Postgres.
+psycopg[binary]==3.2.3
